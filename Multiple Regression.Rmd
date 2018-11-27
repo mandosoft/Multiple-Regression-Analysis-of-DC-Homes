@@ -5,6 +5,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(readr)
 ```
 
 ## R Markdown
@@ -17,18 +20,46 @@ When you click the **Knit** button a document will be generated that includes bo
 # 1. Abstract. One parapgraph summary what we set out to learn and what final conclusions were. 
 ```
 
+
+
+```{r}
 # 2. Introduction. Discussion of the research and business in question. 
+```
+
 
 ```{r}
 
+# 3. Overview of the dataset
+
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+```{r}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# 4. Exploratory analysis
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+
+# 5. Identification and evaluation of suitable model
+
+```
+
+
+```{r}
+
+# 6. Application of the model 
+
+```
+
+
+```{r}
+
+# 7. Limitations and assumptions 
+
+```
+
+
+
