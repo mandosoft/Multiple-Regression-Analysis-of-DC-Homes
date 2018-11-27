@@ -37,9 +37,14 @@ When you click the **Knit** button a document will be generated that includes bo
 
 
 ```{r}
-
 # 4. Exploratory analysis
 
+# TIPS from Prof. Stevens: use barplots for categorical variables 
+# Use GGalley package to expand ggplot2. Includes histogram and correlation pair plotting functions
+
+library(GGally) #if there's trouble installing the package, go to tools -> global options -> packages -> change CRAN mirror to Oakridge,TN
+
+ggpairs(houses)
 houses <- read.csv("DC_properties_clean.csv")
 View(houses)
 print(levels(houses$CNDTN))
@@ -48,6 +53,9 @@ houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very
 #fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + GBA + LANDAREA)
 fit <- lm(data = houses, PRICE ~ BATHRM + BEDRM + GBA + LANDAREA + CNDTN + SALEDATE)
 summary(fit)
+
+
+
 
 ```
 
