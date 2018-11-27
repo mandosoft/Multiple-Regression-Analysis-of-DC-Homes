@@ -16,27 +16,31 @@ library(readr)
 
 This is the markdown file for our final project. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r}
+```{r 1.1}
 # 1. Abstract. One parapgraph summary what we set out to learn and what final conclusions were. 
 ```
 
 
 
-```{r}
+```{r 2.1}
 # 2. Introduction. Discussion of the research and business in question. 
 ```
 
 
-```{r}
+```{r 3.1}
 
 # 3. Overview of the dataset
 
 ```
 
 
+<<<<<<< HEAD
 ```{r}
+=======
+```{r 4.1}
+
+>>>>>>> f0e7ed1c33ae989982b136d640b5e992caabb988
 # 4. Exploratory analysis
 
 # TIPS from Prof. Stevens: use barplots for categorical variables 
@@ -46,6 +50,53 @@ library(GGally) #if there's trouble installing the package, go to tools -> globa
 
 ggpairs(houses)
 houses <- read.csv("DC_properties_clean.csv")
+
+ggplot(houses, aes(x = BATHRM))+
+  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  labs(x="Bathrooms", title="Histogram of Bathrooms")
+
+ggplot(houses, aes(x = HF_BATHRM))+
+  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  labs(x="Half Bathrooms", title="Histogram of Half Bathrooms")
+
+ggplot(houses, aes(x = ROOMS))+
+  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  labs(x="Rooms", title="Histogram of Rooms")
+
+ggplot(houses, aes(x = BEDRM))+
+  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  labs(x="Bed Rooms", title="Histogram of Bed Rooms")
+
+ggplot(houses, aes(x = AYB))+
+  geom_histogram(color="black", fill="light gray", binwidth = 10)+
+  labs(x="Year Built", title="Histogram of Year Built")
+
+ggplot(houses, aes(x = YR_RMDL))+
+  geom_histogram(color="black", fill="light gray", binwidth = 10)+
+  labs(x="Year Remodelled", title="Histogram of Year Remodelled")
+
+ggplot(houses, aes(x = STORIES))+
+  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  labs(x="Stories", title="Histogram of Stories")
+
+ggplot(houses, aes(x = SALEYEAR))+
+  geom_histogram(color="black", fill="light gray", binwidth = 5)+
+  labs(x="Year Sold", title="Histogram of Year Sold")
+
+ggplot(houses, aes(x = SALEMONTH))+
+  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  labs(x="Month Sold", title="Histogram of Month Sold")
+
+ggplot(houses, aes(x = SALEDAY))+
+  geom_histogram(color="black", fill="light gray", binwidth = 4)+
+  labs(x="Day Sold", title="Histogram of Day Sold")
+
+ggplot(houses, aes(x = GBA))+
+  geom_histogram(color="black", fill="light gray", binwidth = 100)+
+  labs(x="Square Footage", title="Histogram of Square Footage")
+
+
+
 View(houses)
 print(levels(houses$CNDTN))
 houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
@@ -60,21 +111,21 @@ summary(fit)
 ```
 
 
-```{r}
+```{r 5.1}
 
 # 5. Identification and evaluation of suitable model
 
 ```
 
 
-```{r}
+```{r 6.1}
 
 # 6. Application of the model 
 
 ```
 
 
-```{r}
+```{r 7.1}
 
 # 7. Limitations and assumptions 
 
