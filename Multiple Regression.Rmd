@@ -1,5 +1,7 @@
 ---
-title: "Multiple Regression"
+title: "Regression Project"
+authors: "Thomas Townsley, John Carr, Matthew Lewis"
+date: "December 7th, 2018""
 output: html_document
 ---
 
@@ -37,6 +39,15 @@ When you click the **Knit** button a document will be generated that includes bo
 ```{r}
 
 # 4. Exploratory analysis
+
+houses <- read.csv("DC_properties_clean.csv")
+View(houses)
+print(levels(houses$CNDTN))
+houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
+
+#fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + GBA + LANDAREA)
+fit <- lm(data = houses, PRICE ~ BATHRM + BEDRM + GBA + LANDAREA + CNDTN + SALEDATE)
+summary(fit)
 
 ```
 
