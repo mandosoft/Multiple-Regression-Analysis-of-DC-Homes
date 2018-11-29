@@ -26,7 +26,7 @@ This is the markdown file for our final project.
 ```{r 2.1}
 # 2. Introduction. Discussion of the research and business in question. 
 
-#Our goal is to build a model that would predict the price of a home in the Washington DC area, if we had pertinent data on that home, based on the same data to other homes in the area and their prices. This model would also be useful in determining what the price of a home in DC should cost. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could offer, or the price a seller could justifiably list the home at. Using data such as land area of the home, number of rooms, years built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant. 
+#Our goal is to build a model that would predict the price of a home in the Washington DC area. If we had pertinent data on that home, based on the same data to other homes in the area and their prices, but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant. 
 ```
 
 
@@ -34,11 +34,11 @@ This is the markdown file for our final project.
 
 # 3. Overview of the dataset
 
-# variable NOT YET excluded
+# single observation NOT YET excluded
 
-#Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main conditional variable we use.  
+#Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main conditional variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
 
-# One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE and thought there might be more significance in using parts of the date at a more granular level. We kept the original SALEDATE column in the dataset, as well.
+# One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each was unique and spreadout, and thought there might be more significance in using individual parts of the dates at higher levels. We kept the original SALEDATE column in the dataset, as well.
 
 # Description of variables:
 # BATHRM (numeric): Number of full bathrooms
