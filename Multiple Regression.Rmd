@@ -77,11 +77,18 @@ houses <- read.csv("DC_properties_clean.csv")
 
 ##pair plotting exploratory analysis
 
-int.vectors <- data.frame(houses$BATHRM, houses$ROOMS, houses$BEDRM, houses$AYB, houses$YR_RMDL, houses$PRICE)
+#First step: look at all possible correlations minus sale date because it wouldn't allow that many factors in the pairs function ¯\_(ツ)_/¯
+
+int.vectors <- data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN)
 
 View(int.vectors)
-as.data.frame(int.vectors)
+
 ggpairs(int.vectors)
+
+#Observations
+# Looks like the variables ROOMS, BATHRM, BEDRM, GBA, STORIES, LANDAREA, and SALEYEAR have the highest correlation across the board i.e > .35
+
+#Next making a pairs plot with just the above variables
 
 ggplot(houses, aes(x = BATHRM))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
