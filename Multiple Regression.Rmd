@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
 library(readr)
+library(GGally)
 ```
 
 ## R Markdown
@@ -26,7 +27,7 @@ This is the markdown file for our final project.
 ```{r 2.1}
 # 2. Introduction. Discussion of the research and business in question. 
 
-#Our goal is to build a model that would predict the price of a home in the Washington DC area. If we had pertinent data on that home, based on the same data to other homes in the area and their prices, but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant. 
+#Our goal is to build a model that can predict the price of a home in the Washington DC area. If we had pertinent data on that home, based on the same data to other homes in the area and their prices, but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant. 
 ```
 
 
@@ -65,16 +66,22 @@ This is the markdown file for our final project.
 =======
 ```{r 4.1}
 
->>>>>>> f0e7ed1c33ae989982b136d640b5e992caabb988
 # 4. Exploratory analysis
 
 # TIPS from Prof. Stevens: use barplots for categorical variables 
 # Use GGalley package to expand ggplot2. Includes histogram and correlation pair plotting functions
 
-library(GGally) #if there's trouble installing the package, go to tools -> global options -> packages -> change CRAN mirror to Oakridge,TN
+ #if there's trouble installing the package, go to tools -> global options -> packages -> change CRAN mirror to Oakridge,TN
 
-ggpairs(houses)
 houses <- read.csv("DC_properties_clean.csv")
+
+##pair plotting exploratory analysis
+
+int.vectors <- data.frame(houses$BATHRM, houses$ROOMS, houses$BEDRM, houses$AYB, houses$YR_RMDL, houses$PRICE)
+
+View(int.vectors)
+as.data.frame(int.vectors)
+ggpairs(int.vectors)
 
 ggplot(houses, aes(x = BATHRM))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
@@ -129,6 +136,7 @@ houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very
 #fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + GBA + LANDAREA)
 fit <- lm(data = houses, PRICE ~ BATHRM + BEDRM + GBA + LANDAREA + CNDTN + SALEDATE)
 summary(fit)
+
 
 
 
