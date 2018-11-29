@@ -25,12 +25,37 @@ This is the markdown file for our final project.
 
 ```{r 2.1}
 # 2. Introduction. Discussion of the research and business in question. 
+
+#Our goal is to build a model that would predict the price of a home in the Washington DC area, if we had pertinent data on that home, based on the same data to other homes in the area and their prices. This model would also be useful in determining what the price of a home in DC should cost. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could offer, or the price a seller could justifiably list the home at. Using data such as land area of the home, number of rooms, years built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant. 
 ```
 
 
 ```{r 3.1}
 
 # 3. Overview of the dataset
+
+# variable NOT YET excluded
+
+#Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main conditional variable we use.  
+
+# One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE and thought there might be more significance in using parts of the date at a more granular level. We kept the original SALEDATE column in the dataset, as well.
+
+# Description of variables:
+# BATHRM (numeric): Number of full bathrooms
+# HF_BATHRM (numeric): Number of half bathrooms (no bathtub or shower)
+# ROOMS (numeric): Total number of rooms
+# BEDRM (numeric): Number of bedrooms
+# AYB (numeric): The earliest time the main portion of the building was built
+# YR_RMDL (numeric): Year structure was remodeled
+# STORIES (numeric): Number of stories in primary dwelling
+# SALEDATE (date): Date of most recent sale
+# SALEMONTH (numeric): Column we created for the calendar month of the most recent sale
+# SALEDAY (numeric): Column we created for the calendar day of the most recent sale
+# SALEYEAR (numeric): Column we created for the calendar year of the most recent sale
+# GBA (numeric): Gross building area in square feet
+# CNDTN (factor): Condition
+# LANDAREA (numeric): Land area of property in square feet
+# PRICE (numeric): Price of most recent sale
 
 ```
 
