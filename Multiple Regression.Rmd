@@ -86,10 +86,17 @@ View(int.vectors)
 ggpairs(int.vectors)
 
 #Observations
-# Looks like the variables ROOMS, BATHRM, BEDRM, GBA, STORIES, LANDAREA, and SALEYEAR have the highest correlation across the board i.e > .35
+# Looks like the variables ROOMS, BATHRM, BEDRM, GBA, STORIES, LANDAREA, SALEYEAR, and PRICE have the highest correlation across the board i.e > |.35|. 
 
 #Next making a pairs plot with just the above variables
 
+int.vectors2 <- data.frame(houses$ROOMS, houses$BATHRM, houses$BEDRM, houses$GBA, houses$LANDAREA, houses$SALEYEAR, houses$PRICE)
+
+ggpairs(int.vectors2)
+
+
+
+#Histograms for each variable
 ggplot(houses, aes(x = BATHRM))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
   labs(x="Bathrooms", title="Histogram of Bathrooms")
