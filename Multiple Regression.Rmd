@@ -11,6 +11,8 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 library(GGally)
+library(car)
+library(broom)
 ```
 
 ## R Markdown
@@ -75,27 +77,6 @@ This is the markdown file for our final project.
 
 houses <- read.csv("DC_properties_clean.csv")
 
-##pair plotting exploratory analysis
-
-#First step: look at all possible correlations minus sale date because it wouldn't allow that many factors in the pairs function ¯\_(ツ)_/¯
-
-int.vectors <- data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN)
-
-View(int.vectors)
-
-ggpairs(int.vectors)
-
-#Observations
-# Looks like the variables ROOMS, BATHRM, BEDRM, GBA, STORIES, LANDAREA, SALEYEAR, and PRICE have the highest correlation across the board i.e > |.35|. 
-
-#Next making a pairs plot with just the above variables
-
-int.vectors2 <- data.frame(houses$ROOMS, houses$BATHRM, houses$BEDRM, houses$GBA, houses$LANDAREA, houses$SALEYEAR, houses$PRICE)
-
-ggpairs(int.vectors2)
-
-
-
 #Histograms for each variable
 ggplot(houses, aes(x = BATHRM))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
@@ -152,8 +133,55 @@ fit <- lm(data = houses, PRICE ~ BATHRM + BEDRM + GBA + LANDAREA + CNDTN + SALED
 summary(fit)
 
 
+#Thomas's exploratory analysis and modeling
+#First step: look at all possible correlations minus sale date because it wouldn't allow that many factors in the pairs function ¯\_(ツ)_/¯
 
+int.vectors <- data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN)
 
+View(int.vectors)
+
+ggpairs(int.vectors)
+
+#Observations
+# Looks like the variables ROOMS, BATHRM, BEDRM, GBA, STORIES, LANDAREA, SALEYEAR, and PRICE have the highest correlation across the board i.e > |.35|. 
+
+#Next making a pairs plot with just the above variables
+
+int.vectors2 <- data.frame(houses$ROOMS, houses$BATHRM, houses$BEDRM, houses$GBA, houses$LANDAREA, houses$SALEYEAR, houses$PRICE)
+
+ggpairs(int.vectors2)
+
+#Now all variables look pretty like have predictive value regarding price. Notice that SALEYEAR is not correlated to anything but PRICE. Should we attempt to explain this, or throw the variable out? 
+
+fit2 <- lm(data = houses, PRICE ~ ROOMS + BATHRM + BEDRM + GBA + LANDAREA + SALEYEAR)
+
+anova(fit)
+anova(fit2)
+
+leveragePlots(fit2, pch = 16)
+
+#Comaparing models
+
+summary(fit)
+summary(fit2)
+
+#Given summary data from both models we can conclude ROOMS, BATHRM, BEDRM, GBA, LANDAREA, SALEYEAR, and CNDNTVeryGood are predictors of PRICE
+
+#plotting and analyzing residuals 
+
+fit2 <- augment(fit2)
+ggplot(fit2, aes (x = .fitted, y = .resid))+
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2)+
+  labs(x = "Fitted Values", y = "Residuals")
+
+#other tests
+
+qqplot(fit2, pch =16 )
+
+shapiro.test(fit2)
+
+ncvTest(fit2)
 
 ```
 
