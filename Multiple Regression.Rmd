@@ -67,16 +67,13 @@ PRICE (numeric): Price of most recent sale
 
 # 4. Exploratory analysis
 
-# TIPS from Prof. Stevens: use barplots for categorical variables 
-# Use GGalley package to expand ggplot2. Includes histogram and correlation pair plotting functions
-
- #if there's trouble installing the package, go to tools -> global options -> packages -> change CRAN mirror to Oakridge,TN
-
 houses <- read.csv("DC_properties_clean.csv")
-
 summary(houses)
+fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
 
-##pair plotting exploratory analysis
+#####################################################
+
+#Thomas's exploratory analysis and modeling
 
 #First step: look at all possible correlations minus sale date because it wouldn't allow that many factors in the pairs function ¯\_(ツ)_/¯
 
@@ -95,7 +92,41 @@ int.vectors2 <- data.frame(houses$ROOMS, houses$BATHRM, houses$BEDRM, houses$GBA
 
 ggpairs(int.vectors2)
 
+#Now all variables look pretty like have predictive value regarding price. Notice that SALEYEAR is not correlated to anything but PRICE. Should we attempt to explain this, or throw the variable out? 
 
+fit2 <- lm(data = houses, PRICE ~ ROOMS + BATHRM + BEDRM + GBA + LANDAREA + SALEYEAR)
+anova(fit)
+anova(fit2)
+
+leveragePlots(fit2, pch = 16)
+
+#Comaparing models
+
+summary(fit)
+summary(fit2)
+
+#Given summary data from both models we can conclude ROOMS, BATHRM, BEDRM, GBA, LANDAREA, SALEYEAR, and CNDNTVeryGood are predictors of PRICE
+
+#plotting and analyzing residuals 
+
+fit2 <- augment(fit2)
+ggplot(fit2, aes (x = .fitted, y = .resid))+
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2)+
+  labs(x = "Fitted Values", y = "Residuals")
+
+#other tests
+
+qqplot(fit2, pch =16 )
+
+shapiro.test(fit2)
+
+ncvTest(fit2)
+
+
+########################################################
+
+# Matt's exploratory analysis and modeling
 
 #Histograms for each variable
 
