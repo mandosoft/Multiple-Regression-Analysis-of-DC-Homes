@@ -1,7 +1,7 @@
 ---
 title: "Regression Project"
-authors: "Thomas Townsley, John Carr, Matthew Lewis"
-date: "December 7th, 2018""
+author: "Thomas Townsley, John Carr, Matthew Lewis"
+date: "December 7th, 2018"
 output: html_document
 ---
 
@@ -11,59 +11,58 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 library(GGally)
+library(car)
+library(broom)
+
 ```
-
-## R Markdown
-
-This is the markdown file for our final project. 
+## Abstract
+One parapgraph summary what we set out to learn and what final conclusions were.
 
 
 ```{r 1.1}
-# 1. Abstract. One parapgraph summary what we set out to learn and what final conclusions were. 
+# 1. Abstract
 ```
-
-
+## Introduction
+Our goal is to build a model that can predict the price of a home in the Washington DC area. If we had pertinent data on that home, based on the same data to other homes in the area and their prices, but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
 
 ```{r 2.1}
-# 2. Introduction. Discussion of the research and business in question. 
+# 2. Introduction
 
-#Our goal is to build a model that can predict the price of a home in the Washington DC area. If we had pertinent data on that home, based on the same data to other homes in the area and their prices, but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant. 
 ```
+## Overview of the Dataset
 
+single observation NOT YET excluded
+
+Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main conditional variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
+
+One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each was unique and spreadout, and thought there might be more significance in using individual parts of the dates at higher levels. We kept the original SALEDATE column in the dataset, as well.
+
+Description of variables:
+BATHRM (numeric): Number of full bathrooms
+HF_BATHRM (numeric): Number of half bathrooms (no bathtub or shower)
+ROOMS (numeric): Total number of rooms
+BEDRM (numeric): Number of bedrooms
+AYB (numeric): The earliest time the main portion of the building was built
+YR_RMDL (numeric): Year structure was remodeled
+STORIES (numeric): Number of stories in primary dwelling
+SALEDATE (date): Date of most recent sale
+SALEMONTH (numeric): Column we created for the calendar month of the most recent sale
+SALEDAY (numeric): Column we created for the calendar day of the most recent sale
+SALEYEAR (numeric): Column we created for the calendar year of the most recent sale
+GBA (numeric): Gross building area in square feet
+CNDTN (factor): Condition
+LANDAREA (numeric): Land area of property in square feet
+PRICE (numeric): Price of most recent sale
 
 ```{r 3.1}
 
 # 3. Overview of the dataset
 
-# single observation NOT YET excluded
-
-#Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main conditional variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
-
-# One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each was unique and spreadout, and thought there might be more significance in using individual parts of the dates at higher levels. We kept the original SALEDATE column in the dataset, as well.
-
-# Description of variables:
-# BATHRM (numeric): Number of full bathrooms
-# HF_BATHRM (numeric): Number of half bathrooms (no bathtub or shower)
-# ROOMS (numeric): Total number of rooms
-# BEDRM (numeric): Number of bedrooms
-# AYB (numeric): The earliest time the main portion of the building was built
-# YR_RMDL (numeric): Year structure was remodeled
-# STORIES (numeric): Number of stories in primary dwelling
-# SALEDATE (date): Date of most recent sale
-# SALEMONTH (numeric): Column we created for the calendar month of the most recent sale
-# SALEDAY (numeric): Column we created for the calendar day of the most recent sale
-# SALEYEAR (numeric): Column we created for the calendar year of the most recent sale
-# GBA (numeric): Gross building area in square feet
-# CNDTN (factor): Condition
-# LANDAREA (numeric): Land area of property in square feet
-# PRICE (numeric): Price of most recent sale
-
 ```
+## Exploratory Analysis
 
 
-<<<<<<< HEAD
-```{r}
-=======
+
 ```{r 4.1}
 
 # 4. Exploratory analysis
@@ -74,6 +73,8 @@ This is the markdown file for our final project.
  #if there's trouble installing the package, go to tools -> global options -> packages -> change CRAN mirror to Oakridge,TN
 
 houses <- read.csv("DC_properties_clean.csv")
+
+summary(houses)
 
 ##pair plotting exploratory analysis
 
@@ -97,6 +98,7 @@ ggpairs(int.vectors2)
 
 
 #Histograms for each variable
+
 ggplot(houses, aes(x = BATHRM))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
   labs(x="Bathrooms", title="Histogram of Bathrooms")
@@ -141,36 +143,110 @@ ggplot(houses, aes(x = GBA))+
   geom_histogram(color="black", fill="light gray", binwidth = 100)+
   labs(x="Square Footage", title="Histogram of Square Footage")
 
+ggplot(houses, aes(x = LANDAREA))+
+  geom_histogram(color="black", fill="light gray", binwidth = 100)+
+  labs(x="Land Area", title="Histogram of Land Area")
+
+ggplot(houses, aes(x = CNDTN))+
+  geom_bar(color="black", fill="light gray")+
+  labs(x="Land Area", title="Bar Plot of Land Area")
 
 
-View(houses)
-print(levels(houses$CNDTN))
+# Re-order only categorical feature (factor)
+
 houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
 
-#fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + GBA + LANDAREA)
-fit <- lm(data = houses, PRICE ~ BATHRM + BEDRM + GBA + LANDAREA + CNDTN + SALEDATE)
+# Fit LM model with all features included
+
+fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+
+# Review ANOVA and compare F statistic
+
+anova(fit)
+
+# Review p-values, check sign of estimates
+
 summary(fit)
 
+# Residual plot and look for non-constant variance
 
+fit.df <- augment(fit)
+ggplot(fit.df, aes(x = .fitted, y = .resid))+
+  geom_point()+
+  geom_hline(yintercept = 0, linetype = 2)+
+  labs( x = "Fitted Values", y = "Residuals")
 
+# Shapiro-Wilk test for normality
 
+shapiro.test(fit$residuals)
+
+# ncvTest for constant variance
+
+ncvTest(fit)
+
+# Variance Inflation Factor (used to identify multicllinearity >= 10)
+
+vif(fit)
+
+# Review R2 value
+# From summary above: adjusted R^2 = .6984
+
+# Drop non-significant predictor variables (Droped AYB: +.0002, Rooms: No change, other lower)
+fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+summary(fit)
+
+# If multicollinearity is present, drop one correlated variable (None present)
+
+# Transform the outcome variable if the residual plot looks suspicious
+powerTransform(houses$PRICE) #.33 -> sqrt
+# log lowers R2: .6585
+fit <- lm(data = houses, log(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+summary(fit)
+# sqrt increase R2: .7471, drop YR_RMDL + .0001
+fit <- lm(data = houses, sqrt(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+summary(fit)
+# inverse drastically decrease
+fit <- lm(data = houses, I(1/PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+summary(fit)
+
+#Variable Transformations
+powerTransform(houses$BATHRM) # didn't work
+powerTransform(houses$HF_BATHRM) # didn't work
+powerTransform(houses$BEDRM) # didn't work
+powerTransform(houses$STORIES) # didn't work
+powerTransform(houses$SALEMONTH) # -1.04 -> INVERSE
+powerTransform(houses$SALEDATE) # didn't work
+powerTransform(houses$SALEYEAR) # didn't work
+powerTransform(houses$GBA) # -.08 -> LOG
+powerTransform(houses$CNDTN) # didn't work
+powerTransform(houses$LANDAREA) # .35 -> SQRT
+fit <- lm(data = houses, sqrt(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM + STORIES + SALEMONTH + I(1/SALEMONTH) + SALEDAY + SALEYEAR +GBA + log(GBA) + CNDTN + LANDAREA + sqrt(LANDAREA))
+summary(fit) # R^2 increased to .7479
+
+#Interactions
+#fit <- lm(data = houses, sqrt(PRICE) ~ .*.) 
+#summary(fit)
+
+shapiro.test(fit$residuals)
+ncvTest(fit)
+vif(fit)
 
 ```
-
+## Identification and Evaluation of Suitable Model
 
 ```{r 5.1}
 
 # 5. Identification and evaluation of suitable model
 
 ```
-
+## Application of the Model
 
 ```{r 6.1}
 
 # 6. Application of the model 
 
 ```
-
+## Limitations and Assumptions
 
 ```{r 7.1}
 
