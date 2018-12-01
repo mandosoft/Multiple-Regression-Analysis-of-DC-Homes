@@ -246,18 +246,18 @@ fit <- lm(data = houses, I(1/PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + S
 summary(fit)
 
 #Variable Transformations
-powerTransform(houses$BATHRM) # didn't work
-powerTransform(houses$HF_BATHRM) # didn't work
-powerTransform(houses$BEDRM) # didn't work
-powerTransform(houses$STORIES) # didn't work
-powerTransform(houses$SALEMONTH) # -1.04 -> INVERSE
+powerTransform(houses$BATHRM+1) # -.011
+powerTransform(houses$HF_BATHRM+1) # .776
+powerTransform(houses$BEDRM+1) # -.130
+powerTransform(houses$STORIES+1) # -2.084
+powerTransform(houses$SALEMONTH) # .809
 powerTransform(houses$SALEDATE) # didn't work
-powerTransform(houses$SALEYEAR) # didn't work
+powerTransform(houses$SALEYEAR-1990) # 1.48 - didn't help
 powerTransform(houses$GBA) # -.08 -> LOG
 powerTransform(houses$CNDTN) # didn't work
 powerTransform(houses$LANDAREA) # .35 -> SQRT
-fit <- lm(data = houses, sqrt(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM + STORIES + SALEMONTH + I(1/SALEMONTH) + SALEDAY + SALEYEAR +GBA + log(GBA) + CNDTN + LANDAREA + sqrt(LANDAREA))
-summary(fit) # R^2 increased to .7479
+fit <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  +  SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+summary(fit) # R^2 increased to .7558
 
 #Interactions
 #fit <- lm(data = houses, sqrt(PRICE) ~ .*.) 
@@ -362,6 +362,9 @@ BIC(fit2_jc) # BIC ==> 56678.87
 ```{r 6.1}
 
 # 6. Application of the model 
+
+# Test on excluded rows
+predict(fit, newdata = excl_rows, interval = "predict")
 
 ```
 ## Limitations and Assumptions
