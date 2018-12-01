@@ -274,6 +274,23 @@ predict(fit, newdata = excl_rows, interval = "predict")
 
 # John's exploratory analysis
 
+# scatterplots
+# price by room
+room_price <- ggplot(houses, aes(x = ROOMS, y = PRICE))
+room_price + geom_point()
+
+# price by year
+year_price <- ggplot(houses, aes(x = SALEYEAR, y = PRICE))
+year_price + geom_point()
+
+# price by month
+month_price <- ggplot(houses, aes(x = SALEMONTH, y = PRICE))
+month_price + geom_point()
+
+# price by day of month
+day_price <- ggplot(houses, aes(x = SALEDAY, y = PRICE))
+day_price + geom_point()
+
 # Boxplots to identify outliers
 boxplot(houses$BATHRM, main="Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BATHRM)$out))
 
@@ -299,27 +316,45 @@ boxplot(houses$LANDAREA, main="Land Area", sub=paste("Outlier rows: ", boxplot.s
 
 boxplot(houses$PRICE, main="Price", sub=paste("Outlier rows: ", boxplot.stats(houses$PRICE)$out))
 
-# find correlations
-
-cor(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM, houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN, houses$PRICE)
-
 # Use corrplot to display a correlation matrix of that variables
 library(corrplot)
-corr_matrix <- cor(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM, houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN, houses$PRICE)
-corrplot(houses, type = "upper", order = "hclust", 
+corr_matrix <- cor(data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA))
+corrplot(corr_matrix, type = "upper", order = "hclust", 
          tl.col = "black", tl.srt = 45)
 
 # fit initial model
 fit_jc <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
 
 # check summary of initial model
+# here we see the variables that are not significant in this model: ROOMS, AYB, YR_RMDL, STORIES, SALEMONTH
 summary(fit_jc)
+
+#second model
+fit2_jc <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + BEDRM + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+
+summary(fit2_jc)
+
+# capture model summary as an object
+modelSummary <- summary(fit2_jc)
+
+# model coefficients
+modelCoeffs <- modelSummary$coefficients
+
 ```
 ## Identification and Evaluation of Suitable Model
 
 ```{r 5.1}
 
 # 5. Identification and evaluation of suitable model
+
+#using AIC & BIC for model comparison
+AIC(fit_jc) # AIC ==> 56607.77
+BIC(fit_jc) # BIC ==> 56708.59
+
+AIC(fit2_jc) # AIC ==> 56606.06
+BIC(fit2_jc) # BIC ==> 56678.87
+
+# The AIC and BIC for fit2_jc are both lower, so that is the better model
 
 ```
 ## Application of the Model
