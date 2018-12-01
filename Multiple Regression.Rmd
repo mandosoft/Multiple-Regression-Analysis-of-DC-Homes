@@ -69,6 +69,11 @@ PRICE (numeric): Price of most recent sale
 
 houses <- read.csv("DC_properties_clean.csv")
 summary(houses)
+
+# Exclude Random Rows
+excl_rows <- houses[sample(nrow(houses), 5), ]
+houses <- setdiff(houses, excl_rows)
+
 fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
 
 #####################################################
@@ -261,6 +266,9 @@ summary(fit) # R^2 increased to .7479
 shapiro.test(fit$residuals)
 ncvTest(fit)
 vif(fit)
+
+# Test on excluded rows
+predict(fit, newdata = excl_rows, interval = "predict")
 
 ######################################
 
