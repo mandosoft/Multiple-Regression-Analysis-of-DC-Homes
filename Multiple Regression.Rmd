@@ -291,20 +291,17 @@ boxplot(houses$LANDAREA, main="Land Area", sub=paste("Outlier rows: ", boxplot.s
 
 boxplot(houses$PRICE, main="Price", sub=paste("Outlier rows: ", boxplot.stats(houses$PRICE)$out))
 
-# find correlations
-
-cor(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM, houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN, houses$PRICE)
-
 # Use corrplot to display a correlation matrix of that variables
 library(corrplot)
-corr_matrix <- cor(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM, houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN, houses$PRICE)
-corrplot(houses, type = "upper", order = "hclust", 
+corr_matrix <- cor(data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA))
+corrplot(corr_matrix, type = "upper", order = "hclust", 
          tl.col = "black", tl.srt = 45)
 
 # fit initial model
 fit_jc <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
 
 # check summary of initial model
+# here we see the variables that are not significant in this model: ROOMS, AYB, YR_RMDL, STORIES, SALEMONTH
 summary(fit_jc)
 ```
 ## Identification and Evaluation of Suitable Model
