@@ -262,6 +262,50 @@ shapiro.test(fit$residuals)
 ncvTest(fit)
 vif(fit)
 
+######################################
+
+# John's exploratory analysis
+
+# Boxplots to identify outliers
+boxplot(houses$BATHRM, main="Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BATHRM)$out))
+
+boxplot(houses$HF_BATHRM, main="Half Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$HF_BATHRM)$out))
+
+boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.stats(houses$ROOMS)$out))
+
+boxplot(houses$BEDRM, main="Bedrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BEDRM)$out))
+
+boxplot(houses$AYB, main="Year Built", sub=paste("Outlier rows: ", boxplot.stats(houses$AYB)$out))
+
+boxplot(houses$YR_RMDL, main="Year Remodeled", sub=paste("Outlier rows: ", boxplot.stats(houses$YR_RMDL)$out))
+
+boxplot(houses$STORIES, main="Stories", sub=paste("Outlier rows: ", boxplot.stats(houses$STORIES)$out))
+
+boxplot(houses$SALEYEAR, main="Year of Most Recent Sale", sub=paste("Outlier rows: ", boxplot.stats(houses$SALEYEAR)$out))
+
+boxplot(houses$GBA, main="Gross Building Area", sub=paste("Outlier rows: ", boxplot.stats(houses$GBA)$out))
+
+boxplot(houses$CNDTN, main="Condition", sub=paste("Outlier rows: ", boxplot.stats(houses$CNDTN)$out))
+
+boxplot(houses$LANDAREA, main="Land Area", sub=paste("Outlier rows: ", boxplot.stats(houses$LANDAREA)$out))
+
+boxplot(houses$PRICE, main="Price", sub=paste("Outlier rows: ", boxplot.stats(houses$PRICE)$out))
+
+# find correlations
+
+cor(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM, houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN, houses$PRICE)
+
+# Use corrplot to display a correlation matrix of that variables
+library(corrplot)
+corr_matrix <- cor(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM, houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA, houses$CNDTN, houses$PRICE)
+corrplot(houses, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+
+# fit initial model
+fit_jc <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+
+# check summary of initial model
+summary(fit_jc)
 ```
 ## Identification and Evaluation of Suitable Model
 
