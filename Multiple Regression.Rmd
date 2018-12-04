@@ -2,7 +2,9 @@
 title: "Regression Project"
 author: "Thomas Townsley, John Carr, Matthew Lewis"
 date: "December 7th, 2018"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -57,7 +59,6 @@ PRICE (numeric): Price of most recent sale
 # 3. Overview of the dataset
 
 ```
-
 
 ```{r 4.1}
 
