@@ -426,7 +426,7 @@ predict(fit, newdata = excl_rows, interval = "predict")
 
 ```{r 7.1}
 
-# 7. Limitations and assumptions 
+# 7. Limitations and assumptions   
 
 # One limitation to the original iteration of our dataset was the SALEDATE. As an independent variable there were too many for them to be significant or to evaluate each individually. Also, the format of SALEDATE did not work well, especially due to the "0:00" after each date, presumably a timestamp. As mentioned in section 2, we split this variable to create new variables for each part of the date. Doing so resulted in new significant variables that improved our model.
 
