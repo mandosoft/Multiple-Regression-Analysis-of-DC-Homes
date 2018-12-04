@@ -67,10 +67,6 @@ houses <- setdiff(houses, excl_rows)
 
 houses$CNDTN <- factor(houses$CNDTN, order = TRUE, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
 
-fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-
-
-
 #Histograms to examine distribution of each variable
 
 ggplot(houses, aes(x = BATHRM))+
@@ -161,6 +157,7 @@ boxc <- boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.
 
 
 # scatterplots
+
 # price by room
 room_price <- ggplot(houses, aes(x = ROOMS, y = PRICE))
 room_price + geom_point()
@@ -179,19 +176,10 @@ day_price + geom_point()
 
 
 # Use corrplot to display a correlation matrix of that variables
-library(corrplot)
+
 corr_matrix <- cor(data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA))
 corrplot(corr_matrix, type = "upper", order = "hclust", 
          tl.col = "black", tl.srt = 45)
-
-
-# capture model summary as an object
-modelSummary <- summary(fit)
-
-# model coefficients
-modelCoeffs <- modelSummary$coefficients
-
-
 
 ```
 ## Identification and Evaluation of Suitable Model
