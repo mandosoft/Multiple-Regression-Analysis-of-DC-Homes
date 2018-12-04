@@ -10,7 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
 library(readr)
-library(GGally)
 library(car)
 library(broom)
 
@@ -67,6 +66,8 @@ houses <- read.csv("DC_properties_clean.csv")
 
 excl_rows <- houses[sample(nrow(houses), 5), ] # Exclude Random Rows
 houses <- setdiff(houses, excl_rows)
+
+houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
 
 fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
 
@@ -152,7 +153,15 @@ boxplot(houses$LANDAREA, main="Land Area", sub=paste("Outlier rows: ", boxplot.s
 
 boxplot(houses$PRICE, main="Price", sub=paste("Outlier rows: ", boxplot.stats(houses$PRICE)$out))
 
+# Boxplots to identify outliers
 
+boxa <- boxplot(houses$BATHRM, main="Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BATHRM)$out))
+
+boxb <- boxplot(houses$HF_BATHRM, main="Half Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$HF_BATHRM)$out))
+
+boxc <- boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.stats(houses$ROOMS)$out))
+
+boxplot(boxa + boxb + boxc)
 
 
 # scatterplots
@@ -188,95 +197,6 @@ modelCoeffs <- modelSummary$coefficients
 
 
 
-# Re-ordered the only categorical feature (factor)
-
-houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
-
-
-
-# Fit LM model with all features included
-
-<<<<<<< HEAD
-
-=======
-fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-
-
-#Variance tests
-
-anova(fit) # Review ANOVA and compare F statistic
-summary(fit) # Review p-values, check sign of estimates
-fit.df <- augment(fit)# Residual plot and look for non-constant variance
-shapiro.test(fit$residuals) # Shapiro-Wilk test for normality
-ncvTest(fit) # ncvTest for constant variance
-vif(fit) # Variance Inflation Factor (used to identify multicllinearity >= 10)
-
-
-
-
-#graph of residuals 
-ggplot(fit.df, aes(x = .fitted, y = .resid))+
-  geom_point()+
-  geom_hline(yintercept = 0, linetype = 2)+
-  labs( x = "Fitted Values", y = "Residuals")
-
-
-
-# Review R2 value
-# From summary above: adjusted R^2 = .6984
-# Drop non-significant predictor variables (Droped AYB: +.0002, Rooms: No change, other lower)
-fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-
-
-
-# If multicollinearity is present, drop one correlated variable (None present)
-# Transform the outcome variable if the residual plot looks suspicious
-powerTransform(houses$PRICE) #.33 -> sqrt
-# log lowers R2: .6585
-fit <- lm(data = houses, log(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-# sqrt increase R2: .7471, drop YR_RMDL + .0001
-
-fit <- lm(data = houses, sqrt(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-# inverse drastically decrease
-
-fit <- lm(data = houses, I(1/PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-
-
-
-#Variable Transformations
-powerTransform(houses$BATHRM+1) # -.011
-powerTransform(houses$HF_BATHRM+1) # .776
-powerTransform(houses$BEDRM+1) # -.130
-powerTransform(houses$STORIES+1) # -2.084
-powerTransform(houses$SALEMONTH) # .809
-powerTransform(houses$SALEDATE) # didn't work
-powerTransform(houses$SALEYEAR-1990) # 1.48 - didn't help
-powerTransform(houses$GBA) # -.08 -> LOG
-powerTransform(houses$CNDTN) # didn't work
-powerTransform(houses$LANDAREA) # .35 -> SQRT
-
-
-
-fit <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  +  SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
-summary(fit) # R^2 increased to .7558
-
-
-#normality tests revisited
-shapiro.test(fit$residuals)
-ncvTest(fit)
-vif(fit)
->>>>>>> c187640c650dfd93d4bd31e867f6912bc97fe85e
-
-
-# Test on excluded rows
-predict(fit, newdata = excl_rows, interval = "predict")
-
-
-
 ```
 ## Identification and Evaluation of Suitable Model
 
@@ -286,22 +206,11 @@ predict(fit, newdata = excl_rows, interval = "predict")
 
 fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
 
-<<<<<<< HEAD
-# Boxplots to identify outliers
-boxa <- boxplot(houses$BATHRM, main="Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BATHRM)$out))
-
-boxb <- boxplot(houses$HF_BATHRM, main="Half Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$HF_BATHRM)$out))
-
-boxc <- boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.stats(houses$ROOMS)$out))
-
-boxplot(boxa + boxb + boxc)
-=======
 # Review p-values, check sign of estimates
 
 summary(fit)
 
 ```
->>>>>>> c6962cfaec57f648662a7385902a258e94c8bd62
 
 ```{r 5.2}
 
@@ -402,13 +311,7 @@ BIC(fit) # BIC
 AIC(fit_final) # AIC 
 BIC(fit_final) # BIC 
 
-<<<<<<< HEAD
 # The AIC and BIC for fit_final are both lower, so that is the better model
-=======
-AIC(fit)
-BIC(fit)
-# The AIC and BIC for fit2_jc are both lower, so that is the better model
->>>>>>> c187640c650dfd93d4bd31e867f6912bc97fe85e
 
 ```
 ## Application of the Model
