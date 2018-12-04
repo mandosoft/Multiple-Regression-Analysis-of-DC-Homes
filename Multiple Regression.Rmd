@@ -16,47 +16,46 @@ library(broom)
 
 ```
 ## Abstract
-One parapgraph summary what we set out to learn and what final conclusions were.
-
+Our goal with this project was to build a model that would predict the price of a home in the Washington D.C. area. We used a dataset that included 2,000 observations of other homes in the area with pertinent data to power the model. Our final model had an R2 of 0.75, which we beleive to be strong. When we run the predictor three out of the five lines we removed from the dataset are predicted acurately. Our conclusion is that our model would allow us to achieve the business need we set out to solve.
 
 ```{r 1.1}
 # 1. Abstract
 
-# Our goal with this project was to build a model that would predict the price of a home in the Washington D.C. area. We used a dataset that included 2,000 observations of other homes in the area with pertinent data to power the model. Our final model had an R2 of 0.75, which we beleive to be strong. When we run the predictor three out of the five lines we removed from the dataset are predicted acurately. Our conclusion is that our model would allow us to achieve the business need we set out to solve.
 ```
+## Introduction
 
+With our model, if we had pertinent data on a home in D.C., but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
 
 ```{r 2.1}
 # 2. Introduction
-
-# With out model, if we had pertinent data on a home in D.C., but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
 ```
+## Overview of the dataset
 
+Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main conditional variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
+
+One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each was unique and spreadout, and thought there might be more significance in using individual parts of the dates at higher levels. We kept the original SALEDATE column in the dataset, as well.
+
+Description of variables:
+BATHRM (numeric): Number of full bathrooms
+HF_BATHRM (numeric): Number of half bathrooms (no bathtub or shower)
+ROOMS (numeric): Total number of rooms
+BEDRM (numeric): Number of bedrooms
+AYB (numeric): The earliest time the main portion of the building was built
+YR_RMDL (numeric): Year structure was remodeled
+STORIES (numeric): Number of stories in primary dwelling
+SALEDATE (date): Date of most recent sale
+SALEMONTH (numeric): Column we created for the calendar month of the most recent sale
+SALEDAY (numeric): Column we created for the calendar day of the most recent sale
+SALEYEAR (numeric): Column we created for the calendar year of the most recent sale
+GBA (numeric): Gross building area in square feet
+CNDTN (factor): Condition
+LANDAREA (numeric): Land area of property in square feet
+PRICE (numeric): Price of most recent sale
 
 ```{r 3.1}
 
 # 3. Overview of the dataset
 
-# Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main conditional variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
-
-# One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each was unique and spreadout, and thought there might be more significance in using individual parts of the dates at higher levels. We kept the original SALEDATE column in the dataset, as well.
-
-#Description of variables:
-#BATHRM (numeric): Number of full bathrooms
-#HF_BATHRM (numeric): Number of half bathrooms (no bathtub or shower)
-#ROOMS (numeric): Total number of rooms
-#BEDRM (numeric): Number of bedrooms
-#AYB (numeric): The earliest time the main portion of the building was built
-#YR_RMDL (numeric): Year structure was remodeled
-#STORIES (numeric): Number of stories in primary dwelling
-#SALEDATE (date): Date of most recent sale
-#SALEMONTH (numeric): Column we created for the calendar month of the most recent sale
-#SALEDAY (numeric): Column we created for the calendar day of the most recent sale
-#SALEYEAR (numeric): Column we created for the calendar year of the most recent sale
-#GBA (numeric): Gross building area in square feet
-#CNDTN (factor): Condition
-#LANDAREA (numeric): Land area of property in square feet
-#PRICE (numeric): Price of most recent sale
 ```
 
 
@@ -424,15 +423,15 @@ predict(fit, newdata = excl_rows, interval = "predict")
 ```
 ## Limitations and Assumptions
 
+One limitation to the original iteration of our dataset was the SALEDATE. As an independent variable there were too many for them to be significant or to evaluate each individually. Also, the format of SALEDATE did not work well, especially due to the "0:00" after each date, presumably a timestamp. As mentioned in section 2, we split this variable to create new variables for each part of the date. Doing so resulted in new significant variables that improved our model.
+
+In the future we would potentially include geographic data. In the original dataset there was longitude and latitude data, which was excluded from the dataset. Retrospectively, not being able to identify neighborhoods where homes are could be a limitation and including that data could make the model more accurate and useful.
+
+One assumption that we make with this dataset, and thus our model, is the "Condition" variable. I would be interested in knowing who determined the condition of each home, when and by what means of evaluation. Is there a standard for such an assessment? This seems like something that could be subjective. Also we notice that there is no "poor" condition - the lowest level is "Fair", which could perpetuate subjectivity.
+
 ```{r 7.1}
 
 # 7. Limitations and assumptions   
-
-# One limitation to the original iteration of our dataset was the SALEDATE. As an independent variable there were too many for them to be significant or to evaluate each individually. Also, the format of SALEDATE did not work well, especially due to the "0:00" after each date, presumably a timestamp. As mentioned in section 2, we split this variable to create new variables for each part of the date. Doing so resulted in new significant variables that improved our model.
-
-# In the future we would potentially include geographic data. In the original dataset there was longitude and latitude data, which was excluded from the dataset. Retrospectively, not being able to identify neighborhoods where homes are could be a limitation and including that data could make the model more accurate and useful.
-
-# One assumption that we make with this dataset, and thus our model, is the "Condition" variable. I would be interested in knowing who determined the condition of each home, when and by what means of evaluation. Is there a standard for such an assessment? This seems like something that could be subjective. Also we notice that there is no "poor" condition - the lowest level is "Fair", which could perpetuate subjectivity.
 
 ```
 
