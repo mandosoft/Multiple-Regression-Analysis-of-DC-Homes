@@ -194,78 +194,7 @@ houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very
 
 # Fit LM model with all features included
 
-fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
 
-# Review ANOVA and compare F statistic
-
-anova(fit)
-
-# Review p-values, check sign of estimates
-
-summary(fit)
-
-# Residual plot and look for non-constant variance
-
-fit.df <- augment(fit)
-ggplot(fit.df, aes(x = .fitted, y = .resid))+
-  geom_point()+
-  geom_hline(yintercept = 0, linetype = 2)+
-  labs( x = "Fitted Values", y = "Residuals")
-
-# Shapiro-Wilk test for normality
-
-shapiro.test(fit$residuals)
-
-# ncvTest for constant variance
-
-ncvTest(fit)
-
-# Variance Inflation Factor (used to identify multicllinearity >= 10)
-
-vif(fit)
-
-# Review R2 value
-# From summary above: adjusted R^2 = .6984
-
-# Drop non-significant predictor variables (Droped AYB: +.0002, Rooms: No change, other lower)
-fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-
-# If multicollinearity is present, drop one correlated variable (None present)
-
-# Transform the outcome variable if the residual plot looks suspicious
-powerTransform(houses$PRICE) #.33 -> sqrt
-# log lowers R2: .6585
-fit <- lm(data = houses, log(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-# sqrt increase R2: .7471, drop YR_RMDL + .0001
-fit <- lm(data = houses, sqrt(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-# inverse drastically decrease
-fit <- lm(data = houses, I(1/PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-
-#Variable Transformations
-powerTransform(houses$BATHRM+1) # -.011
-powerTransform(houses$HF_BATHRM+1) # .776
-powerTransform(houses$BEDRM+1) # -.130
-powerTransform(houses$STORIES+1) # -2.084
-powerTransform(houses$SALEMONTH) # .809
-powerTransform(houses$SALEDATE) # didn't work
-powerTransform(houses$SALEYEAR-1990) # 1.48 - didn't help
-powerTransform(houses$GBA) # -.08 -> LOG
-powerTransform(houses$CNDTN) # didn't work
-powerTransform(houses$LANDAREA) # .35 -> SQRT
-fit <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  +  SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
-summary(fit) # R^2 increased to .7558
-
-#Interactions
-#fit <- lm(data = houses, sqrt(PRICE) ~ .*.) 
-#summary(fit)
-
-shapiro.test(fit$residuals)
-ncvTest(fit)
-vif(fit)
 
 # Test on excluded rows
 predict(fit, newdata = excl_rows, interval = "predict")
@@ -347,14 +276,114 @@ modelCoeffs <- modelSummary$coefficients
 
 # 5. Identification and evaluation of suitable model
 
+fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+
+# Review p-values, check sign of estimates
+
+summary(fit)
+
+```
+
+```{r 5.2}
+
+# Review ANOVA and compare F statistic
+
+anova(fit)
+
+```
+
+```{r 5.3}
+
+# Residual plot and look for non-constant variance
+
+fit.df <- augment(fit)
+ggplot(fit.df, aes(x = .fitted, y = .resid))+
+  geom_point()+
+  geom_hline(yintercept = 0, linetype = 2)+
+  labs( x = "Fitted Values", y = "Residuals")
+
+```
+
+```{r 5.4}
+# Shapiro-Wilk test for normality
+
+shapiro.test(fit$residuals)
+
+```
+
+```{r 5.5}
+# ncvTest for constant variance
+
+ncvTest(fit)
+
+```
+
+```{r 5.6}
+
+# Variance Inflation Factor (used to identify multicllinearity >= 10)
+
+vif(fit)
+
+```
+
+```{r 5.7}
+# Review R2 value
+# From summary above: adjusted R^2 = .6984
+
+# Drop non-significant predictor variables (Droped AYB: +.0002, Rooms: No change, other lower)
+fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+summary(fit)
+
+# If multicollinearity is present, drop one correlated variable (None present)
+
+# Transform the outcome variable if the residual plot looks suspicious
+powerTransform(houses$PRICE) #.33 -> sqrt
+
+```
+
+```{r 5.8, echo=False}
+
+# log lowers R2: .6585
+fit <- lm(data = houses, log(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+summary(fit)
+# sqrt increase R2: .7471, drop YR_RMDL + .0001
+fit <- lm(data = houses, sqrt(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+summary(fit)
+# inverse drastically decrease
+fit <- lm(data = houses, I(1/PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+summary(fit)
+
+#Variable Transformations
+powerTransform(houses$BATHRM+1) # -.011
+powerTransform(houses$HF_BATHRM+1) # .776
+powerTransform(houses$BEDRM+1) # -.130
+powerTransform(houses$STORIES+1) # -2.084
+powerTransform(houses$SALEMONTH) # .809
+powerTransform(houses$SALEDATE) # didn't work
+powerTransform(houses$SALEYEAR-1990) # 1.48 - didn't help
+powerTransform(houses$GBA) # -.08 -> LOG
+powerTransform(houses$CNDTN) # didn't work
+powerTransform(houses$LANDAREA) # .35 -> SQRT
+
+fit_final <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+summary(fit_final) # R^2 increased to .7558
+
+```
+
+```{r 5.9}
+
+shapiro.test(fit$residuals)
+ncvTest(fit)
+vif(fit)
+
 #using AIC & BIC for model comparison
-AIC(fit_jc) # AIC ==> 56607.77
-BIC(fit_jc) # BIC ==> 56708.59
+AIC(fit) # AIC
+BIC(fit) # BIC
 
-AIC(fit2_jc) # AIC ==> 56606.06
-BIC(fit2_jc) # BIC ==> 56678.87
+AIC(fit_final) # AIC 
+BIC(fit_final) # BIC 
 
-# The AIC and BIC for fit2_jc are both lower, so that is the better model
+# The AIC and BIC for fit_final are both lower, so that is the better model
 
 ```
 ## Application of the Model
