@@ -21,7 +21,6 @@ library(corrplot)
 Our goal with this project was to build a model that would predict the price of a home in the Washington D.C. area. We used a dataset that included 2,000 observations of other homes in the area with pertinent data to power the model. Our final model had an R2 of 0.75, which we beleive to be strong. When we run the predictor three out of the five lines we removed from the dataset are predicted acurately. Our conclusion is that our model would allow us to achieve the business need we set out to solve.
 
 ```{r 1.1}
-# 1. Abstract
 
 ```
 ## Introduction
@@ -29,7 +28,7 @@ Our goal with this project was to build a model that would predict the price of 
 With our model, if we had pertinent data on a home in D.C., but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
 
 ```{r 2.1}
-# 2. Introduction
+
 ```
 ## Overview of the dataset
 
@@ -55,8 +54,6 @@ LANDAREA (numeric): Land area of property in square feet
 PRICE (numeric): Price of most recent sale
 
 ```{r 3.1}
-
-# 3. Overview of the dataset
 
 ```
 
@@ -337,8 +334,6 @@ In the future we would potentially include geographic data. In the original data
 One assumption that we make with this dataset, and thus our model, is the "Condition" variable. I would be interested in knowing who determined the condition of each home, when and by what means of evaluation. Is there a standard for such an assessment? This seems like something that could be subjective. Also we notice that there is no "poor" condition - the lowest level is "Fair", which could perpetuate subjectivity.
 
 ```{r 7.1}
-
-# 7. Limitations and assumptions   
 
 ```
 
