@@ -68,7 +68,7 @@ houses <- read.csv("DC_properties_clean.csv")
 excl_rows <- houses[sample(nrow(houses), 5), ] # Exclude Random Rows
 houses <- setdiff(houses, excl_rows)
 
-houses$CNDTN <- factor(houses$CNDTN, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
+houses$CNDTN <- factor(houses$CNDTN, order = TRUE, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
 
 fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
 
@@ -161,8 +161,6 @@ boxa <- boxplot(houses$BATHRM, main="Bathrooms", sub=paste("Outlier rows: ", box
 boxb <- boxplot(houses$HF_BATHRM, main="Half Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$HF_BATHRM)$out))
 
 boxc <- boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.stats(houses$ROOMS)$out))
-
-boxplot(boxa + boxb + boxc)
 
 
 # scatterplots
@@ -270,7 +268,7 @@ powerTransform(houses$PRICE) #.33 -> sqrt
 
 ```
 
-```{r 5.8, echo=False}
+```{r 5.8, echo=FALSE}
 
 # log lowers R2: .6585
 fit <- lm(data = houses, log(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
@@ -288,14 +286,18 @@ powerTransform(houses$HF_BATHRM+1) # .776
 powerTransform(houses$BEDRM+1) # -.130
 powerTransform(houses$STORIES+1) # -2.084
 powerTransform(houses$SALEMONTH) # .809
-powerTransform(houses$SALEDATE) # didn't work
 powerTransform(houses$SALEYEAR-1990) # 1.48 - didn't help
 powerTransform(houses$GBA) # -.08 -> LOG
-powerTransform(houses$CNDTN) # didn't work
 powerTransform(houses$LANDAREA) # .35 -> SQRT
 
 fit_final <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
 summary(fit_final) # R^2 increased to .7558
+
+fit.df <- augment(fit)
+ggplot(fit.df, aes(x = .fitted, y = .resid))+
+  geom_point()+
+  geom_hline(yintercept = 0, linetype = 2)+
+  labs( x = "Fitted Values", y = "Residuals")
 
 ```
 
