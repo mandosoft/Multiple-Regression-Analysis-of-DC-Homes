@@ -2,9 +2,8 @@
 title: "Regression Project"
 author: "Thomas Townsley, John Carr, Matthew Lewis"
 date: "December 7th, 2018"
-output:
-  pdf_document: default
-  html_document: default
+output: html_document
+
 ---
 
 ```{r setup, include=FALSE}
