@@ -3,8 +3,8 @@ title: "Multiple Regression Analysis of D.C. Homes"
 author: "Thomas Townsley, John Carr, Matthew Lewis"
 date: "December 7th, 2018"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -91,7 +91,7 @@ plot5 <- ggplot(houses, aes(x = AYB))+
 
 plot6 <- ggplot(houses, aes(x = YR_RMDL))+
   geom_histogram(color="black", fill="light gray", binwidth = 10)+
-  labs(x="Year Remodeled", title="Histogram of Year Remodeled")
+  labs(x="Year Remodeled", title="Year Remodeled")
 
 plot7 <- ggplot(houses, aes(x = STORIES))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
