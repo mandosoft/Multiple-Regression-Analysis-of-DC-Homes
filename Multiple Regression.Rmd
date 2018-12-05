@@ -198,6 +198,8 @@ fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_
 summary(fit)
 
 ```
+Initially, we were surprised with a R^2 value of .6982 by using all variables with no transformations. We regarded this value as significant and established .6982 as our baseline for improvement.
+
 Judging by the p-values, ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH appeared to be potentially insignificant. It is also visible, that the estmiated model coefficients had two negative values, BEDRM and YR_RMDL. Intuitively, the more bedrooms a house has and the more recent remodelling was conducted, the higher the price should be. This means these two varaibles would have positive correlation with the target variable price. BEDRM, however, did still have a significant p-value.
 
 To continue analysis of our base model, we also conducted an ANOVA test:
@@ -254,55 +256,72 @@ vif(fit)
 
 ```
 
-```{r 5.7}
+A GVIF score of ten or more indicates multicollinearity. None of the variables were close to these threshold, so multicollinearity was not present among our features.
+
+#### Model Improvement
+
+Now that we had analyzed our inital model and established areas of improvement, we then moved into refining our model. We first began with dropping variables that appeared to be insignificant according to high p-values. This included the variables: ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH. We began with the variable with the highest p-value and began dropping them from the model. If removing the variable decreased the R^2 value, we added the variable back and continued on to the next variable. The only positive result was dropping the variable AYB, which increased the R^2 score by .0002. Dropping ROOMS did not affect accuracy and removing the other variables lowered R^2. We decided to keep the other variables and only drop AYB, which resulted in a new R^2 baseline at .6984.
+
+We also considered the variables with negative coefficients that we outlined previously. YR_RMDL was already tested because of it's high p-value but we tested dropping BEDRM as well. This resulted in a lower R^2, so we decided to keep the variable for the model.
+
+Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For this data, we anticipated some correllation between variables. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have few, but large rooms and still have a high level of square footage. This could also be said for rooms and bedrooms. Our concusion was that multicolliearity may be present in similar data sets, but was not found, or significant, in our data of 2000 houses.
+
+We then progressed onto transforming the remaining variables. We conducted Box-Cox test on each predicitng variable to undertsand if there was a transformation that would somewhat normalize that variable. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R^2. Adding log(BEDRM + 1) and the log(GBA) brought our R^2 to .7269, which was an adequate improvement.
+
+Next, we considered the target variable PRICE for transformation. According to our prelimminary tests, we could not conclude ANOVA assumptions two and three, that signaled to us that a target variable transformation maybe necessary. We conducted a BOX-Cox test and received the following output:
+
+
+```{r 5.7, echo=FALSE}
 # Review R2 value
 # From summary above: adjusted R^2 = .6984
 
 # Drop non-significant predictor variables (Droped AYB: +.0002, Rooms: No change, other lower)
-fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
+fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  +  BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+#summary(fit)
 
 # If multicollinearity is present, drop one correlated variable (None present)
+
+#Variable Transformations
+#powerTransform(houses$HF_BATHRM+1) # .776
+#powerTransform(houses$BEDRM+1) # -.130
+#powerTransform(houses$STORIES+1) # -2.084
+#powerTransform(houses$SALEMONTH) # .809
+#powerTransform(houses$SALEYEAR-1990) # 1.48 - didn't help
+#powerTransform(houses$GBA) # -.08 -> LOG
+#powerTransform(houses$LANDAREA) # .35 -> SQRT
+
+fit <- lm(data = houses, PRICE ~  BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+#summary(fit) # R^2 increased to .7269
 
 # Transform the outcome variable if the residual plot looks suspicious
 powerTransform(houses$PRICE) #.33 -> sqrt
 
-```
+# log lowers R2: .6589
+fit1 <- lm(data = houses, log(PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+#summary(fit1)
+# sqrt increase R2: .7481, drop YR_RMDL + .0001
+fit2 <- lm(data = houses, sqrt(PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+#summary(fit2)
+# inverse drastically decrease
+fit3 <- lm(data = houses, I(1/PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+#summary(fit3)
 
+```
+A lambda value of 0.33 is roughly half way in between the log and sqrt transformation values. We tested both transformations and considered the resdiual plot for each transformation. Log actually lowered the R^2 to .6589 while sqrt increased the R^2 to .7481 Both residual plots greatly improved the residual distribution. We decided on the sqrt transformation because of it's increase in R^2 accuracy:
 ```{r 5.8, echo=FALSE}
 
-# log lowers R2: .6585
-fit <- lm(data = houses, log(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-# sqrt increase R2: .7471, drop YR_RMDL + .0001
-fit <- lm(data = houses, sqrt(PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
-# inverse drastically decrease
-fit <- lm(data = houses, I(1/PRICE) ~ BATHRM + HF_BATHRM  + BEDRM  + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
-summary(fit)
+fit_final <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM  + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+summary(fit_final) # R^2 increased to .7481
 
-#Variable Transformations
-powerTransform(houses$BATHRM+1) # -.011
-powerTransform(houses$HF_BATHRM+1) # .776
-powerTransform(houses$BEDRM+1) # -.130
-powerTransform(houses$STORIES+1) # -2.084
-powerTransform(houses$SALEMONTH) # .809
-powerTransform(houses$SALEYEAR-1990) # 1.48 - didn't help
-powerTransform(houses$GBA) # -.08 -> LOG
-powerTransform(houses$LANDAREA) # .35 -> SQRT
-
-fit_final <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
-summary(fit_final) # R^2 increased to .7558
-
-fit.df <- augment(fit)
-ggplot(fit.df, aes(x = .fitted, y = .resid))+
+fit_final.df <- augment(fit_final)
+ggplot(fit_final.df, aes(x = .fitted, y = .resid))+
   geom_point()+
   geom_hline(yintercept = 0, linetype = 2)+
   labs( x = "Fitted Values", y = "Residuals")
 
 ```
 
-```{r 5.9}
+```{r 5.9, echo=FALSE}
 
 shapiro.test(fit$residuals)
 ncvTest(fit)
