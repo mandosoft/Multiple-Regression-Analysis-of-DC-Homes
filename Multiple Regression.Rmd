@@ -22,30 +22,31 @@ Utilizing a dataset with information on houses sold in the Washington D.C. area,
 
 ## Introduction
 
-With our regression model, having pertinent data on a home in the D.C. area, but not the price, we should be able to predict what the price should be within a margin of error. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithm. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
+With our regression model, assuming we have pertinent data on a home in the D.C. area but not the price, we should be able to predict the price within a margin of error. Also, this model should be able to assess whether a home is overvalued or undervalued at a given date even if there is a price already associated with it. For example, this model would help the buyer or seller understand what would be a reasonable final bid price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithm. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
 
 ## Overview of the dataset
 
-Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main categorical variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
+Our dataset is titled *D.C. Residential Properties* and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main categorical variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
 
-One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each date was unique, spreadout, and made it difficult to analyze model accuracy with thousands of p-scores. We hypothesized that there might be more significance in using individual parts of the dates at higher levels. Hoewver, We did keep the original SALEDATE column in the dataset, but did not use it for analysis.
+One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each date was unique, spreadout, and made it difficult to analyze model accuracy with thousands of p-scores. We hypothesized that there might be more significance in using individual parts of the dates at higher levels. However, We did keep the original SALEDATE column in the dataset, but did not use it for analysis.
 
-Description of variables:
-BATHRM (numeric): Number of full bathrooms
-HF_BATHRM (numeric): Number of half bathrooms (no bathtub or shower)
-ROOMS (numeric): Total number of rooms
-BEDRM (numeric): Number of bedrooms
-AYB (numeric): The earliest time the main portion of the building was built
-YR_RMDL (numeric): Year structure was remodeled
-STORIES (numeric): Number of stories in primary dwelling
-SALEDATE (date): Date of most recent sale
-SALEMONTH (numeric): Column we created for the calendar month of the most recent sale
-SALEDAY (numeric): Column we created for the calendar day of the most recent sale
-SALEYEAR (numeric): Column we created for the calendar year of the most recent sale
-GBA (numeric): Gross building area in square feet
-CNDTN (factor): Condition
-LANDAREA (numeric): Land area of property in square feet
-PRICE (numeric): Price of most recent sale
+Description of variables: \newline
+
+BATHRM (numeric): Number of full bathrooms \newline
+HF_BATHRM (numeric): Number of half bathrooms (no bathtub or shower) \newline
+ROOMS (numeric): Total number of rooms \newline
+BEDRM (numeric): Number of bedrooms \newline
+AYB (numeric): The earliest time the main portion of the building was built \newline
+YR_RMDL (numeric): Year structure was remodeled \newline
+STORIES (numeric): Number of stories in primary dwelling \newline
+SALEDATE (date): Date of most recent sale \newline
+SALEMONTH (numeric): Column we created for the calendar month of the most recent sale \newline
+SALEDAY (numeric): Column we created for the calendar day of the most recent sale \newline
+SALEYEAR (numeric): Column we created for the calendar year of the most recent sale \newline
+GBA (numeric): Gross building area in square feet \newline
+CNDTN (factor): Condition \newline
+LANDAREA (numeric): Land area of property in square feet \newline
+PRICE (numeric): Price of most recent sale \newline
 
 ```{r 3.1, echo=FALSE}
 
@@ -390,7 +391,7 @@ $\widehat{Y} = -49280 + 56.94X + 35.80X_2 + -38.24X_3 + 112.40X_4 + 60.61X_5 + 3
 
 ## Application of the Model
 
-At the beginning of our annalysis, we removed five records to test our final model, once we had it established. 
+At the beginning of our analysis, we removed five records to test our final model, once we had it established. 
 
 
 ```{r 6.1, echo=FALSE}
