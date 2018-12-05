@@ -85,39 +85,44 @@ plot4 <- ggplot(houses, aes(x = BEDRM))+
 grid.arrange(plot1, plot2, plot3, plot4, nrow =2, ncol = 2)
 
 
+
 plot5 <- ggplot(houses, aes(x = AYB))+
   geom_histogram(color="black", fill="light gray", binwidth = 10)+
   labs(x="Year Built", title="Histogram of Year Built")
 
 plot6 <- ggplot(houses, aes(x = YR_RMDL))+
   geom_histogram(color="black", fill="light gray", binwidth = 10)+
-  labs(x="Year Remodelled", title="Histogram of Year Remodelled")
-
-grid.arrange(plot5, plot6, ncol = 2)
+  labs(x="Year Remodeled", title="Histogram of Year Remodeled")
 
 plot7 <- ggplot(houses, aes(x = STORIES))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
   labs(x="Stories", title="Histogram of Stories")
 
-ggplot(houses, aes(x = SALEYEAR))+
+plot8 <- ggplot(houses, aes(x = SALEYEAR))+
   geom_histogram(color="black", fill="light gray", binwidth = 5)+
   labs(x="Year Sold", title="Histogram of Year Sold")
 
-ggplot(houses, aes(x = SALEMONTH))+
+grid.arrange(plot5, plot6, plot7, plot8, nrow =2, ncol = 2)
+
+
+plot9 <- ggplot(houses, aes(x = SALEMONTH))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
   labs(x="Month Sold", title="Histogram of Month Sold")
 
-ggplot(houses, aes(x = SALEDAY))+
+plot10 <- ggplot(houses, aes(x = SALEDAY))+
   geom_histogram(color="black", fill="light gray", binwidth = 4)+
   labs(x="Day Sold", title="Histogram of Day Sold")
 
-ggplot(houses, aes(x = GBA))+
+plot11 <- ggplot(houses, aes(x = GBA))+
   geom_histogram(color="black", fill="light gray", binwidth = 100)+
   labs(x="Square Footage", title="Histogram of Square Footage")
 
-ggplot(houses, aes(x = LANDAREA))+
+plot12 <- ggplot(houses, aes(x = LANDAREA))+
   geom_histogram(color="black", fill="light gray", binwidth = 100)+
   labs(x="Land Area", title="Histogram of Land Area")
+
+grid.arrange(plot9, plot10, plot11, plot12, nrow =2, ncol = 2)
+
 
 ggplot(houses, aes(x = CNDTN))+
   geom_bar(color="black", fill="light gray")+
