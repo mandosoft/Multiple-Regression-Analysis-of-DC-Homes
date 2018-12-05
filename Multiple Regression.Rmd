@@ -1,5 +1,5 @@
 ---
-title: "Regression Project"
+title: "Multiple Regression Analysis of D.C. Homes"
 author: "Thomas Townsley, John Carr, Matthew Lewis"
 date: "December 7th, 2018"
 output:
@@ -132,26 +132,33 @@ ggplot(houses, aes(x = CNDTN))+
 
 # Boxplots to identify outliers
 
+par(mfrow = c(1,2))
 boxplot(houses$BATHRM, main="Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BATHRM)$out))
 
 boxplot(houses$HF_BATHRM, main="Half Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$HF_BATHRM)$out))
 
+par(mfrow = c(1,2))
 boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.stats(houses$ROOMS)$out))
 
 boxplot(houses$BEDRM, main="Bedrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BEDRM)$out))
 
+
+par(mfrow = c(1,2))
 boxplot(houses$AYB, main="Year Built", sub=paste("Outlier rows: ", boxplot.stats(houses$AYB)$out))
 
 boxplot(houses$YR_RMDL, main="Year Remodeled", sub=paste("Outlier rows: ", boxplot.stats(houses$YR_RMDL)$out))
 
+par(mfrow = c(1,2))
 boxplot(houses$STORIES, main="Stories", sub=paste("Outlier rows: ", boxplot.stats(houses$STORIES)$out))
 
 boxplot(houses$SALEYEAR, main="Year of Most Recent Sale", sub=paste("Outlier rows: ", boxplot.stats(houses$SALEYEAR)$out))
 
+par(mfrow = c(1,2))
 boxplot(houses$GBA, main="Gross Building Area", sub=paste("Outlier rows: ", boxplot.stats(houses$GBA)$out))
 
 boxplot(houses$CNDTN, main="Condition", sub=paste("Outlier rows: ", boxplot.stats(houses$CNDTN)$out))
 
+par(mfrow = c(1,2))
 boxplot(houses$LANDAREA, main="Land Area", sub=paste("Outlier rows: ", boxplot.stats(houses$LANDAREA)$out))
 
 boxplot(houses$PRICE, main="Price", sub=paste("Outlier rows: ", boxplot.stats(houses$PRICE)$out))
@@ -165,24 +172,44 @@ boxb <- boxplot(houses$HF_BATHRM, main="Half Bathrooms", sub=paste("Outlier rows
 boxc <- boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.stats(houses$ROOMS)$out))
 
 
+
+```
+
+```{r}
+
+```
+
+###Scatter Plots of Price by Room, Day, Month, and Year of Sale
+
+```{r, echo=FALSE}
+
 # scatterplots
+
 
 # price by room
 room_price <- ggplot(houses, aes(x = ROOMS, y = PRICE))
-room_price + geom_point()
+room_price_plot <- room_price + geom_point()
 
 # price by year
 year_price <- ggplot(houses, aes(x = SALEYEAR, y = PRICE))
-year_price + geom_point()
+year_price_plot <- year_price + geom_point()
+
 
 # price by month
 month_price <- ggplot(houses, aes(x = SALEMONTH, y = PRICE))
-month_price + geom_point()
+month_price_plot <- month_price + geom_point()
 
 # price by day of month
 day_price <- ggplot(houses, aes(x = SALEDAY, y = PRICE))
-day_price + geom_point()
+day_price_plot <-  day_price + geom_point()
 
+grid.arrange(room_price_plot, year_price_plot, month_price_plot, day_price_plot, nrow = 2,  ncol = 2)
+
+```
+
+###Plot Displaying Correlation Values Between Variables
+
+```{r, echo = FALSE}
 
 # Use corrplot to display a correlation matrix of that variables
 
@@ -191,6 +218,8 @@ corrplot(corr_matrix, type = "upper", order = "hclust",
          tl.col = "black", tl.srt = 45)
 
 ```
+
+
 
 ## Identification and Evaluation of Suitable Model
 
