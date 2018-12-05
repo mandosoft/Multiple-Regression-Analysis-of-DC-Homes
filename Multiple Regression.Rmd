@@ -58,29 +58,28 @@ houses$CNDTN <- factor(houses$CNDTN, order = TRUE, levels = c("Fair", "Average",
 
 ```
 
+## Exploration of Dataset
+
 ```{r 4.1, echo=FALSE}
 
-# 4. Exploratory analysis
-
-#Histograms to examine distribution of each variable
 
 require(gridExtra)
 
 plot1 <- ggplot(houses, aes(x = BATHRM))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
-  labs(x="Bathrooms", title="Histogram of Bathrooms")
+  labs(x="Bathrooms", title="Bathrooms")
 
 plot2 <- ggplot(houses, aes(x = HF_BATHRM))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
-  labs(x="Half Bathrooms", title="Histogram of Half Bathrooms")
+  labs(x="Half Bathrooms", title="Half Bathrooms")
 
 plot3 <- ggplot(houses, aes(x = ROOMS))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
-  labs(x="Rooms", title="Histogram of Rooms")
+  labs(x="Rooms", title="Rooms")
 
 plot4 <- ggplot(houses, aes(x = BEDRM))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
-  labs(x="Bed Rooms", title="Histogram of Bed Rooms")
+  labs(x="Bed Rooms", title="Bed Rooms")
 
 grid.arrange(plot1, plot2, plot3, plot4, nrow =2, ncol = 2)
 
@@ -88,7 +87,7 @@ grid.arrange(plot1, plot2, plot3, plot4, nrow =2, ncol = 2)
 
 plot5 <- ggplot(houses, aes(x = AYB))+
   geom_histogram(color="black", fill="light gray", binwidth = 10)+
-  labs(x="Year Built", title="Histogram of Year Built")
+  labs(x="Year Built", title="Year Built")
 
 plot6 <- ggplot(houses, aes(x = YR_RMDL))+
   geom_histogram(color="black", fill="light gray", binwidth = 10)+
@@ -96,37 +95,40 @@ plot6 <- ggplot(houses, aes(x = YR_RMDL))+
 
 plot7 <- ggplot(houses, aes(x = STORIES))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
-  labs(x="Stories", title="Histogram of Stories")
+  labs(x="Stories", title="Stories")
 
 plot8 <- ggplot(houses, aes(x = SALEYEAR))+
   geom_histogram(color="black", fill="light gray", binwidth = 5)+
-  labs(x="Year Sold", title="Histogram of Year Sold")
+  labs(x="Year Sold", title="Year Sold")
 
 grid.arrange(plot5, plot6, plot7, plot8, nrow =2, ncol = 2)
 
 
+
 plot9 <- ggplot(houses, aes(x = SALEMONTH))+
   geom_histogram(color="black", fill="light gray", binwidth = 1)+
-  labs(x="Month Sold", title="Histogram of Month Sold")
+  labs(x="Month Sold", title="Month Sold")
 
 plot10 <- ggplot(houses, aes(x = SALEDAY))+
   geom_histogram(color="black", fill="light gray", binwidth = 4)+
-  labs(x="Day Sold", title="Histogram of Day Sold")
+  labs(x="Day Sold", title="Day Sold")
 
 plot11 <- ggplot(houses, aes(x = GBA))+
   geom_histogram(color="black", fill="light gray", binwidth = 100)+
-  labs(x="Square Footage", title="Histogram of Square Footage")
+  labs(x="Square Footage", title="Square Footage")
 
 plot12 <- ggplot(houses, aes(x = LANDAREA))+
   geom_histogram(color="black", fill="light gray", binwidth = 100)+
-  labs(x="Land Area", title="Histogram of Land Area")
+  labs(x="Land Area", title="Land Area")
 
 grid.arrange(plot9, plot10, plot11, plot12, nrow =2, ncol = 2)
 
 
 ggplot(houses, aes(x = CNDTN))+
   geom_bar(color="black", fill="light gray")+
-  labs(x="Land Area", title="Bar Plot of Land Area")
+  labs(x="Condition of Home", title="Home Condition")
+
+
 
 # Boxplots to identify outliers
 
@@ -353,7 +355,7 @@ Since AIC and BIC are higher for our final model, our model adjustments increase
 
 #### Final Model
 
-Y = -49280 + 56.94X1 + 35.80X2 + -38.24X3 + 112.40X4 + 60.61X5 + 3.52X6 + 1.44X7 + 25.00X8 + 14.45X9 + -99.70X10 + 403.7X11 + 85.75X12 + 65.30X13 + 14.83X12 + .049X13
+$Y = -49280 + 56.94X + 35.80X2 + -38.24X3 + 112.40X4 + 60.61X5 + 3.52X6 + 1.44X7 + 25.00X8 + 14.45X9 + -99.70X10 + 403.7X11 + 85.75X12 + 65.30X13 + 14.83X12 + .049X13$
 
 
 ## Application of the Model
