@@ -2,8 +2,9 @@
 title: "Regression Project"
 author: "Thomas Townsley, John Carr, Matthew Lewis"
 date: "December 7th, 2018"
-output: html_document
-
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -17,11 +18,11 @@ library(corrplot)
 
 ```
 ## Abstract
-Our goal with this project was to build a model that would predict the price of a home in the Washington D.C. area. We used a dataset that included 2,000 observations of other homes in the area with pertinent data to power the model. Our final model had an R2 of 0.75, which we beleive to be strong. When we run the predictor three out of the five lines we removed from the dataset are predicted acurately. Our conclusion is that our model would allow us to achieve the business need we set out to solve.
+Our goal with this project was to build a model that would predict the price of a home in the Washington D.C. area. We used a dataset that included 2,000 observations of other homes in the area with pertinent data to power the model. Our final model had an R<sup>2</sup> of 0.75, which we believe to be strong. When we run the predictor three out of the five lines we removed from the dataset are predicted acurately. Our conclusion is that our model would allow us to achieve the business need we set out to solve.
 
 ## Introduction
 
-With our model, if we had pertinent data on a home in D.C., but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithym. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
+With our model, if we had pertinent data on a home in D.C., but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithm. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
 
 ## Overview of the dataset
 
@@ -192,7 +193,7 @@ fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_
 summary(fit)
 
 ```
-Initially, we were surprised with a R^2 value of .6982 by using all variables with no transformations. We regarded this value as significant and established .6982 as our baseline for improvement.
+Initially, we were surprised with an R<sup>2</sup> value of .6982 by using all variables with no transformations. We regarded this value as significant and established .6982 as our baseline for improvement.
 
 Judging by the p-values, ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH appeared to be potentially insignificant. It is also visible, that the estmiated model coefficients had two negative values, BEDRM and YR_RMDL. Intuitively, the more bedrooms a house has and the more recent remodelling was conducted, the higher the price should be. This means these two varaibles would have positive correlation with the target variable price. BEDRM, however, did still have a significant p-value. 
 
@@ -228,7 +229,7 @@ The plot above clearly shows that our model did not have normally distributed er
 shapiro.test(fit$residuals)
 
 ```
-Since the p-value for the Shapiro-Wilk test was essentially 0, this indicated our model did not have mormal residuals, which confirms the information from the residual plot.
+Since the p-value for the Shapiro-Wilk test was essentially 0, this indicated our model did not have normal residuals, which confirms the information from the residual plot.
 
 Before we began model improvement, we checked for the third assumption of ANOVA, that the variances of each group were equal:
 ```{r 5.5, echo=FALSE}
@@ -239,7 +240,7 @@ ncvTest(fit)
 ```
 The practically 0 p-value indicated that we could not assume equal variances with our model.
 
-These tests and exploratory analysis of our inital linear regression model revealed to us we could not validate ANOVA assumption number 2 or 3. This led us to the conclussion that we needed to conduct a box-cox test and appropriately transform our target variable to account for these issues.
+These tests and exploratory analysis of our inital linear regression model revealed to us we could not validate ANOVA assumption number 2 or 3. This led us to the conclusion that we needed to conduct a Box-Cox test and appropriately transform our target variable to account for these issues.
 
 The last model analysis we performed was reviewing the Variance Inflation Factors for evidence of multicollinearity.
 ```{r 5.6, echo=FALSE}
@@ -250,19 +251,19 @@ vif(fit)
 
 ```
 
-A GVIF score of ten or more indicates multicollinearity. None of the variables were close to these threshold, so multicollinearity was not present among our features.
+A GVIF score of ten or more indicates multicollinearity. None of the variables were close to these thresholds, so multicollinearity was not present among our features.
 
 #### Model Improvement
 
-Now that we had analyzed our inital model and established areas of improvement, we then moved into refining our model. We first began with dropping variables that appeared to be insignificant according to high p-values. This included the variables: ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH. We began with the variable with the highest p-value and began dropping them from the model. If removing the variable decreased the R^2 value, we added the variable back and continued on to the next variable. The only positive result was dropping the variable AYB, which increased the R^2 score by .0002. Dropping ROOMS did not affect accuracy and removing the other variables lowered R^2. We decided to keep the other variables and only drop AYB, which resulted in a new R^2 baseline at .6984.
+Now that we had analyzed our inital model and established areas of improvement, we then moved into refining our model. We first began with dropping variables that appeared to be insignificant according to high p-values. This included the variables: ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH. We began with the variable with the highest p-value and began dropping them from the model. If removing the variable decreased the R<sup>2</sup> value, we added the variable back and continued on to the next variable. The only positive result was dropping the variable AYB, which increased the R^2 score by .0002. Dropping ROOMS did not affect accuracy and removing the other variables lowered R<sup>2. We decided to keep the other variables and only drop AYB, which resulted in a new R^2 baseline at .6984.
 
-We also considered the variables with negative coefficients that we outlined previously. YR_RMDL was already tested because of it's high p-value but we tested dropping BEDRM as well. This resulted in a lower R^2, so we decided to keep the variable for the model. It could be the case, however, that in the region of this data set, having more bedrooms is undesirable past a certain point. This may be the case in a highly-populated with younger demographics.
+We also considered the variables with negative coefficients that we outlined previously. YR_RMDL was already tested because of it's high p-value but we tested dropping BEDRM as well. This resulted in a lower R<sup>2</sup>, so we decided to keep the variable for the model. It could be the case, however, that in the region of this data set, having more bedrooms is undesirable past a certain point. This may be the case in a highly-populated with younger demographics.
 
 Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For this data, we anticipated some correllation between variables. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have few, but large rooms and still have a high level of square footage. This could also be said for rooms and bedrooms. Our concusion was that multicolliearity may be present in similar data sets, but was not found, or significant, in our data of 2000 houses.
 
-We then progressed onto transforming the remaining variables. We conducted Box-Cox test on each predicitng variable to undertsand if there was a transformation that would somewhat normalize that variable. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R^2. Adding log(BEDRM + 1) and the log(GBA) brought our R^2 to .7269, which was an adequate improvement.
+We then progressed onto transforming the remaining variables. We conducted Box-Cox test on each predicitng variable to understand if there was a transformation that would somewhat normalize that variable. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R^2. Adding log(BEDRM + 1) and the log(GBA) brought our R^2 to .7269, which was an adequate improvement.
 
-Next, we considered the target variable PRICE for transformation. According to our prelimminary tests, we could not conclude ANOVA assumptions two and three, that signaled to us that a target variable transformation maybe necessary. We conducted a BOX-Cox test and received the following output:
+Next, we considered the target variable PRICE for transformation. According to our prelimminary tests, we could not conclude ANOVA assumptions two and three, that signaled to us that a target variable transformation may be necessary. We conducted a BOX-Cox test and received the following output:
 
 
 ```{r 5.7, echo=FALSE}
@@ -301,7 +302,7 @@ fit3 <- lm(data = houses, I(1/PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+
 #summary(fit3)
 
 ```
-A lambda value of 0.33 is roughly half way in between the log and sqrt transformation values. We tested both transformations and considered the resdiual plot for each transformation. Log actually lowered the R^2 to .6589 while sqrt increased the R^2 to .7481 Both residual plots greatly improved the residual distribution. We decided on the sqrt transformation because of it's increase in R^2 accuracy:
+A lambda value of 0.33 is roughly half way in between the log and sqrt transformation values. We tested both transformations and considered the resdiual plot for each transformation. Log actually lowered the R<sup>2</sup> to .6589 while sqrt increased the R<sup>2</sup> to .7481 Both residual plots greatly improved the residual distribution. We decided on the sqrt transformation because of it's increase in R<sup>2</sup> accuracy:
 ```{r 5.8, echo=FALSE}
 
 fit_final <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM  + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
@@ -315,7 +316,7 @@ ggplot(fit_final.df, aes(x = .fitted, y = .resid))+
 
 ```
 
-With an R^2 value of .7481, our model accounts for roughly 75% of variation in price from the predicting variables. This is the highest we were able to get the R^2 value following the process outlined above.
+With an R<sup>2</sup> value of .7481, our model accounts for roughly 75% of variation in price from the predicting variables. This is the highest we were able to get the R^2 value following the process outlined above.
 
 Also, as you can see, the plot of residuals looks much better and confirms the sqrt transformation aided our model.
 
