@@ -31,9 +31,9 @@ With our model, if we had pertinent data on a home in D.C., but not the price, w
 ```
 ## Overview of the dataset
 
-Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main conditional variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
+Our dataset is titled D.C. Residential Properties and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main categorical variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
 
-One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each was unique and spreadout, and thought there might be more significance in using individual parts of the dates at higher levels. We kept the original SALEDATE column in the dataset, as well.
+One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each date was unique, spreadout, and made it difficult to analyze model accuracy with thousands of p-scores. We hypothesized that there might be more significance in using individual parts of the dates at higher levels. Hoewver, We did keep the original SALEDATE column in the dataset, but did not use it for analysis.
 
 Description of variables:
 BATHRM (numeric): Number of full bathrooms
@@ -182,9 +182,12 @@ corrplot(corr_matrix, type = "upper", order = "hclust",
          tl.col = "black", tl.srt = 45)
 
 ```
+
 ## Identification and Evaluation of Suitable Model
 
-```{r 5.1}
+We first began multiple linear regression with all the predictor variables utilized (except for SALEDATE). This gave us a baseline R2 score to base feature transformation performance as well as any target variable transformations as well.
+
+```{r 5.1, echo=FALSE}
 
 # 5. Identification and evaluation of suitable model
 
@@ -195,8 +198,10 @@ fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_
 summary(fit)
 
 ```
+Judging by the p-values, ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH appeared to be potentially insignificant. It is also visible, that the estmiated model coefficients had two negative values, BEDRM and YR_RMDL. Intuitively, the more bedrooms a house has and the more recent remodelling was conducted, the higher the price should be. This means these two varaibles would have positive correlation with the target variable price. BEDRM, however, did still have a significant p-value.
 
-```{r 5.2}
+To continue analysis of our base model, we also conducted an ANOVA test:
+```{r 5.2, echo=FALSE}
 
 # Review ANOVA and compare F statistic
 
@@ -204,7 +209,10 @@ anova(fit)
 
 ```
 
-```{r 5.3}
+
+Next, we decidied to check the second assumption of ANOVA: that all errors must be normally distributed. We plotted the residuals and annotated their distribution:
+
+```{r 5.3, echo=FALSE}
 
 # Residual plot and look for non-constant variance
 
@@ -216,21 +224,29 @@ ggplot(fit.df, aes(x = .fitted, y = .resid))+
 
 ```
 
-```{r 5.4}
+The plot above dictated that our data did not have normally distributed errors. To confirm this formally, we conducted a Shapiro-Wilk test:
+
+```{r 5.4, echo=FALSE}
 # Shapiro-Wilk test for normality
 
 shapiro.test(fit$residuals)
 
 ```
+Since the p-value for the Shapiro-Wilk test was essentially 0, this indicated our model did not have mormal residuals, which confirms the information from the residual plot.
 
-```{r 5.5}
+Before we began model improvement, we checked for the third assumption of ANOVA, that the variances of each group were equal:
+```{r 5.5, echo=FALSE}
 # ncvTest for constant variance
 
 ncvTest(fit)
 
 ```
+The practically 0 p-value indicated that we could not assume equal variances with our model.
 
-```{r 5.6}
+These tests and exploratory analysis of our inital linear regression model revealed to us we could not validate ANOVA assumption number 2 or 3. This led us to the conclussion that we needed to conduct a box-cox test and appropriately transform our target variable to account for these issues.
+
+The last model analysis we performed was reviewing the Variance Inflation Factors for evidence of multicollinearity.
+```{r 5.6, echo=FALSE}
 
 # Variance Inflation Factor (used to identify multicllinearity >= 10)
 
