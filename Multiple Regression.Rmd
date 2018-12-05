@@ -18,11 +18,11 @@ library(corrplot)
 library(gridExtra)
 ```
 ## Abstract
-Our goal with this project was to build a model that would predict the price of a home in the Washington D.C. area. We used a dataset that included 2,000 observations of other homes in the area with pertinent data to power the model. Our final model had an R<sup>2</sup> of 0.75, which we believe to be strong. When we run the predictor three out of the five lines we removed from the dataset are predicted acurately. Our conclusion is that our model would allow us to achieve the business need we set out to solve.
+Utilizing a dataset with information on houses sold in the Washington D.C. area, we created a mutiple regression model that predicts the price of a home based on a number of numeric and categorical variables provided by the dataset. The dataset includes 2,000 observations of homes sold in the D.C area. After several cycles of processing and optimizing the parameters determined to be most useful in predicting the price of a home sold, the final model produces an R<sup>2</sup> value of 0.75, which we believe to be strong enough for consideration as a predictive tool for future home price forecasting. When running the predictor, three out of the five lines removed from the dataset are predicted acurately. We conclude that the multiple regression model is a strong predictor of home price and ultimately has a variety of applications to business problems involving the price of homes in the D.C. area. 
 
 ## Introduction
 
-With our model, if we had pertinent data on a home in D.C., but not the price, we will be able to predict what the price should be. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithm. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
+With our regression model, having pertinent data on a home in the D.C. area, but not the price, we should be able to predict what the price should be within a margin of error. Also, this model would be useful in determining what the price of a home in DC should cost even if there is a price already associated with it. For example, if one were to be in the market for such a home, this model would help the buyer or seller understand what would be a reasonable final price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithm. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
 
 ## Overview of the dataset
 
@@ -384,12 +384,14 @@ Since AIC and BIC are higher for our final model, our model adjustments increase
 
 #### Final Model
 
-$Y = -49280 + 56.94X + 35.80X2 + -38.24X3 + 112.40X4 + 60.61X5 + 3.52X6 + 1.44X7 + 25.00X8 + 14.45X9 + -99.70X10 + 403.7X11 + 85.75X12 + 65.30X13 + 14.83X12 + .049X13$
+
+$\widehat{Y} = -49280 + 56.94X + 35.80X_2 + -38.24X_3 + 112.40X_4 + 60.61X_5 + 3.52X_6 + 1.44X_7 + 25.00X_8 + 14.45X_9 + -99.70X_{10} + 403.7X_{11} + 85.75X_{12} + 65.30X_{13} + 14.83X_{14} + .049\varepsilon$
 
 
 ## Application of the Model
 
 At the beginning of our annalysis, we removed five records to test our final model, once we had it established. 
+
 
 ```{r 6.1, echo=FALSE}
 
@@ -407,4 +409,6 @@ One limitation to the original iteration of our dataset was the SALEDATE. As an 
 In the future we would potentially include geographic data. In the original dataset there was longitude and latitude data, which was excluded from the dataset. Retrospectively, not being able to identify neighborhoods where homes are could be a limitation and including that data could make the model more accurate and useful.
 
 One assumption that we make with this dataset, and thus our model, is the "Condition" variable. I would be interested in knowing who determined the condition of each home, when and by what means of evaluation. Is there a standard for such an assessment? This seems like something that could be subjective. Also we notice that there is no "poor" condition - the lowest level is "Fair", which could perpetuate subjectivity.
+
+
 
