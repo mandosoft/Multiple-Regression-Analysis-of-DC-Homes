@@ -133,7 +133,9 @@ ggplot(houses, aes(x = CNDTN))+
 
 
 # Boxplots to identify outliers
-#For many of these we had to factor the variables within the boxplot to have a more accurate look at where the outliers are. For example, because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense.
+#For many of these we had to factor the variables within the boxplot to have a more accurate and comprehensive look at where the outliers are. For example, because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense.
+
+# In a number of these we can see one or two extreme outliers. These are likely homes that were sold for an unusually large price compared to similar homes. As we describe more below, it is possible that data related to the neighborhood of these extreme outliers could be informative.
 
 ggplot(houses, aes(x=BATHRM, y = PRICE, color = factor(BATHRM))) +
   geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
@@ -219,13 +221,15 @@ grid.arrange(room_price_plot, year_price_plot, month_price_plot, day_price_plot,
 
 ```{r, echo = FALSE}
 
-# Use corrplot to display a correlation matrix of that variables
+# Here we use corrplot to display a correlation matrix of the variables. The blue circles indicate a positive correlation between the variables and the red circles indicate a negative correlation. The size of the circle shows how much of a correlation. We felt that shading the colors by level of correlation made the correlations close to 0 difficult to see, and that it was uneccessary considering that even though there is no scale of the specific levels, we can gain an understanding by the size of the circles. 
+
+# In this plot we can see a number of understandable correlations, such as bedrooms to rooms, or rooms to building area, for example. But one that gives us a useful understanding of the data is that building area has a large correlation to Price, where as the year the home was built does not.
 
 corr_matrix <- cor(data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA))
 colnames(corr_matrix) <- c("Half-bath", "Bathrooms", "Rooms", "Bedrooms", "Year Built", "Year Remodeled", "Price", "Sale Year", "Stories", "Landarea", "Building Area")
 rownames(corr_matrix) <- c("Half-bath", "Bathrooms", "Rooms", "Bedrooms", "Year Built", "Year Remodeled", "Price", "Sale Year", "Stories", "Landarea", "Building Area")
-corrplot(corr_matrix, type = "upper", order = "hclust", 
-         tl.col = "black", tl.srt = 36, insig = NULL)
+corrplot(corr_matrix, method = "circle", type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 36, insig = NULL, col = c("red", "blue"))
 
 ```
 
