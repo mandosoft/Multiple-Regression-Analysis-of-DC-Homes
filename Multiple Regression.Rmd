@@ -63,6 +63,7 @@ houses$CNDTN <- factor(houses$CNDTN, order = TRUE, levels = c("Fair", "Average",
 
 ```{r 4.1, echo=FALSE}
 
+summary(houses)
 
 require(gridExtra)
 
@@ -224,7 +225,7 @@ corrplot(corr_matrix, type = "upper", order = "hclust",
 
 ## Identification and Evaluation of Suitable Model
 
-We first began multiple linear regression with all the predictor variables utilized (except for SALEDATE). This gave us a baseline R2 score to base feature transformation performance as well as any target variable transformations as well.
+We first began multiple linear regression with all the predictor variables utilized (except for SALEDATE). This gave us a baseline </sup> score to base feature transformation performance as well as any target variable transformations as well.
 
 ```{r 5.1, echo=FALSE}
 
@@ -299,13 +300,13 @@ A GVIF score of ten or more indicates multicollinearity. None of the variables w
 
 #### Model Improvement
 
-Now that we had analyzed our inital model and established areas of improvement, we then moved into refining our model. We first began with dropping variables that appeared to be insignificant according to high p-values. This included the variables: ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH. We began with the variable with the highest p-value and began dropping them from the model. If removing the variable decreased the R<sup>2</sup> value, we added the variable back and continued on to the next variable. The only positive result was dropping the variable AYB, which increased the R^2 score by .0002. Dropping ROOMS did not affect accuracy and removing the other variables lowered R<sup>2. We decided to keep the other variables and only drop AYB, which resulted in a new R^2 baseline at .6984.
+Now that we had analyzed our inital model and established areas of improvement, we then moved into refining our model. We first began with dropping variables that appeared to be insignificant according to high p-values. This included the variables: ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH. We began with the variable with the highest p-value and began dropping them from the model. If removing the variable decreased the R<sup>2</sup> value, we added the variable back and continued on to the next variable. The only positive result was dropping the variable AYB, which increased the R<sup>2</sup> score by .0002. Dropping ROOMS did not affect accuracy and removing the other variables lowered R<sup>2</sup>. We decided to keep the other variables and only drop AYB, which resulted in a new R<sup>2</sup> baseline at .6984.
 
 We also considered the variables with negative coefficients that we outlined previously. YR_RMDL was already tested because of it's high p-value but we tested dropping BEDRM as well. This resulted in a lower R<sup>2</sup>, so we decided to keep the variable for the model. It could be the case, however, that in the region of this data set, having more bedrooms is undesirable past a certain point. This may be the case in a highly-populated with younger demographics.
 
 Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For this data, we anticipated some correllation between variables. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have few, but large rooms and still have a high level of square footage. This could also be said for rooms and bedrooms. Our concusion was that multicolliearity may be present in similar data sets, but was not found, or significant, in our data of 2000 houses.
 
-We then progressed onto transforming the remaining variables. We conducted Box-Cox test on each predicitng variable to understand if there was a transformation that would somewhat normalize that variable. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R^2. Adding log(BEDRM + 1) and the log(GBA) brought our R^2 to .7269, which was an adequate improvement.
+We then progressed onto transforming the remaining variables. We conducted Box-Cox test on each predicitng variable to understand if there was a transformation that would somewhat normalize that variable. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R<sup>2</sup>. Adding log(BEDRM + 1) and the log(GBA) brought our R<sup>2</sup> to .7269, which was an adequate improvement.
 
 Next, we considered the target variable PRICE for transformation. According to our prelimminary tests, we could not conclude ANOVA assumptions two and three, that signaled to us that a target variable transformation may be necessary. We conducted a BOX-Cox test and received the following output:
 
@@ -360,7 +361,7 @@ ggplot(fit_final.df, aes(x = .fitted, y = .resid))+
 
 ```
 
-With an R<sup>2</sup> value of .7481, our model accounts for roughly 75% of variation in price from the predicting variables. This is the highest we were able to get the R^2 value following the process outlined above.
+With an R<sup>2</sup> value of .7481, our model accounts for roughly 75% of variation in price from the predicting variables. This is the highest we were able to get the R<sup>2</sup> value following the process outlined above.
 
 Also, as you can see, the plot of residuals looks much better and confirms the sqrt transformation aided our model.
 
@@ -368,14 +369,10 @@ To confirm our efforts of dropping variables and transforming them improved our 
 ```{r 5.9, echo=FALSE}
 
 #using AIC & BIC for model comparison
-"Initial Model AIC:"
-AIC(fit) # AIC
-"Initial Model BIC:"
-BIC(fit) # BIC
-"Final Model AIC:"
-AIC(fit_final) # AIC
-"Final Model BIC:"
-BIC(fit_final) # BIC 
+cat("Initial Model AIC: ", AIC(fit))
+cat("Initial Model BIC: ", BIC(fit))
+cat("Final Model AIC: ", AIC(fit_final))
+cat("Final Model BIC: ", BIC(fit_final))
 
 # The AIC and BIC for fit_final are both lower, so that is the better model
 
@@ -386,22 +383,40 @@ Since AIC and BIC are higher for our final model, our model adjustments increase
 #### Final Model
 
 
-$\widehat{Y} = -49280 + 56.94X + 35.80X_2 + -38.24X_3 + 112.40X_4 + 60.61X_5 + 3.52X_6 + 1.44X_7 + 25.00X_8 + 14.45X_9 + -99.70X_{10} + 403.7X_{11} + 85.75X_{12} + 65.30X_{13} + 14.83X_{14} + .049\varepsilon$
+$\widehat{Y} = -49280 + 56.94X_1 + 35.80X_2 + -38.24X_3 + 112.40X_4 + 60.61X_5 + 3.52X_6 + 1.44X_7 + 25.00X_8 + 14.45X_9 + -99.70X_{10} + 403.7X_{11} + 85.75X_{12} + 65.30X_{13} + 14.83X_{14} + .049X_{15} + \varepsilon$
+
+Where X values are BATHRM, HF_BATHRM, BEDRM, log(BEDRM+1), STORIES, SALEMONTH, SALEDAY, SALEYEAR, GBA, log(GBA), CNDTN-AVERAGE, CNDTN-GOOD, CNDTN-VERYGOOD, CNDTN-EXCELLENT, and LANDAREA respectfully.
 
 
 ## Application of the Model
 
-At the beginning of our analysis, we removed five records to test our final model, once we had it established. 
-
+At the beginning of our analysis, we removed five records to test our final model. Here are those records that we set aside for prediction:
 
 ```{r 6.1, echo=FALSE}
+
+excl_rows
+```
+
+To analyze the accuracy of our model we predicted PRICE values for these 5 records and compared them to the actual values.
+
+```{r 6.2, echo=FALSE}
 
 # 6. Application of the model 
 
 # Test on excluded rows
-predict(fit, newdata = excl_rows, interval = "predict")
+predict(fit_final, newdata = excl_rows, interval = "predict")
 
 ```
+Our prediction resulted in a predicted price value, the fit column, as well as upper and lower bounds of a 95% confidence interval. After comparing them to the actual prices, we saw that the first house (1589) and the third house (1082) had predicted prices that were not close to the actual prices. Also, for both these houses, the actual price did not fall into the interval for which we were 95% confident they would be using our model. The first and third houses had a predicted and actual price of $414,986, $68,000 and $1,138,524, 1,725,00 respectfully. To better understand these errors and for further analysis, we considered the descriptive statistics of the PRICE variable:
+
+```{r 6.3, echo=FALSE}
+summary(houses$PRICE)
+```
+Judging by this information, we saw that both these records, although not statistically outliers, are significantly far from the median and mean. The first house lies near the bottom of the first quartile while the third house lies near the top of the fourth quartile. Both of these values are statistically uncommon for our data and therefore would be difficult to accurately predict.
+
+The other three houses fell comfortably within our confidence interval with the predicted price being within ~$100,000 of the actual price. These houses were much closer to the mean and were more typical repesentations of our data set.
+
+Based off of the prediction, we were satisfied that our model could accurately aid in predicting the price of a specific house. This is especially true of houses that are closer to the area mean as they are more likely to have a smaller error. Houses that may lay on the extremes of the data, as shown above, may be more prone to prediction errors. However, based on the analysis of our model's performance and goodness-of-fit, we deemed this model acceptable and could potentially aid a buyer or seller in assessing home value, market price, market trends, and a variety of other applications.
 
 ## Limitations and Assumptions
 
