@@ -62,9 +62,17 @@ houses$CNDTN <- factor(houses$CNDTN, order = TRUE, levels = c("Fair", "Average",
 
 ## Exploration of Dataset
 
+#### Descriptive Satistics
+
 ```{r 4.1, echo=FALSE}
 
 summary(houses)
+
+```
+
+#### Histograms of Predictor Variables
+
+```{r 4.2, echo=FALSE}
 
 require(gridExtra)
 
@@ -131,7 +139,15 @@ ggplot(houses, aes(x = CNDTN))+
   geom_bar(color="black", fill="light gray")+
   labs(x="Condition of Home", title="Home Condition")
 
+```
 
+#### Boxplots to Identify Outliers
+
+For many of these we had to factor the variables within the boxplot to have a more accurate and comprehensive look at where the outliers are. For example, because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense.
+
+In a number of these we can see one or two extreme outliers. These are likely homes that were sold for an unusually large price compared to similar homes. As we describe more below, it is possible that data related to the neighborhood of these extreme outliers could be informative.
+
+```{r 4.3, echo=FALSE}
 
 # Boxplots to identify outliers
 #For many of these we had to factor the variables within the boxplot to have a more accurate and comprehensive look at where the outliers are. For example, because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense.
@@ -186,13 +202,9 @@ ggplot(houses, aes(x=LANDAREA, y=PRICE)) +
 
 ```
 
-```{r}
+#### Scatter Plots of Price by Room, Day, Month, and Year of Sale
 
-```
-
-###Scatter Plots of Price by Room, Day, Month, and Year of Sale
-
-```{r, echo=FALSE}
+```{r 4.4, echo=FALSE}
 
 # scatterplots
 
@@ -218,9 +230,13 @@ grid.arrange(room_price_plot, year_price_plot, month_price_plot, day_price_plot,
 
 ```
 
-###Plot Displaying Correlation Values Between Variables
+#### Plot Displaying Correlation Values Between Variables
 
-```{r, echo = FALSE}
+Here we use corrplot to display a correlation matrix of the variables. The blue circles indicate a positive correlation between the variables and the red circles indicate a negative correlation. The size of the circle shows how much of a correlation. We felt that shading the colors by level of correlation made the correlations close to 0 difficult to see, and that it was uneccessary considering that even though there is no scale of the specific levels, we can gain an understanding by the size of the circles. 
+
+In this plot we can see a number of understandable correlations, such as bedrooms to rooms, or rooms to building area, for example. But one that gives us a useful understanding of the data is that building area has a large correlation to Price, where as the year the home was built does not.
+
+```{r 4.5, echo = FALSE}
 
 # Here we use corrplot to display a correlation matrix of the variables. The blue circles indicate a positive correlation between the variables and the red circles indicate a negative correlation. The size of the circle shows how much of a correlation. We felt that shading the colors by level of correlation made the correlations close to 0 difficult to see, and that it was uneccessary considering that even though there is no scale of the specific levels, we can gain an understanding by the size of the circles. 
 
