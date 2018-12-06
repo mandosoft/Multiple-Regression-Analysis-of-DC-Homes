@@ -134,7 +134,7 @@ ggplot(houses, aes(x = CNDTN))+
 
 # Boxplots to identify outliers
 
-ggplot(houses, aes(x=BATHRM, y=PRICE, color = factor(BATHRM))) +
+ggplot(houses, aes(x=BATHRM, y = PRICE, color = factor(BATHRM))) +
   geom_boxplot(outlier.color = "black", outlier.size = 1) +
   labs(x="Number of Bathrooms", y="Price")
     
@@ -151,6 +151,7 @@ ggplot(houses, aes(x=BEDRM, y=PRICE, color = factor(BEDRM))) +
   labs(x="Number of Bedrooms", y="Price")
 
 #Because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense. But it looks busy. If I had more time I would figure out how to group them into decades
+
 ggplot(houses, aes(x=AYB, y=PRICE, color = factor(AYB))) +
   geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
   labs(x="Year Built", y="Price")
@@ -160,35 +161,25 @@ ggplot(houses, aes(x=YR_RMDL, y=PRICE, color = factor(YR_RMDL))) +
   labs(x="Year Remodeled", y="Price") +
   coord_flip()
 
-#####
+ggplot(houses, aes(x=STORIES, y=PRICE, color = factor(STORIES))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Number of Stories", y="Price")
 
+ggplot(houses, aes(x=SALEYEAR, y=PRICE, color = factor(SALEYEAR))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Year of Most Recent Sale", y="Price")
 
-boxplot(houses$YR_RMDL, main="Year Remodeled", sub=paste("Outlier rows: ", boxplot.stats(houses$YR_RMDL)$out))
+ggplot(houses, aes(x=GBA, y=PRICE)) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Gross Building Area", y="Price")
 
-par(mfrow = c(1,2))
-boxplot(houses$STORIES, main="Stories", sub=paste("Outlier rows: ", boxplot.stats(houses$STORIES)$out))
+ggplot(houses, aes(x=CNDTN, y=PRICE, color = factor(CNDTN))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Condition", y="Price")
 
-boxplot(houses$SALEYEAR, main="Year of Most Recent Sale", sub=paste("Outlier rows: ", boxplot.stats(houses$SALEYEAR)$out))
-
-par(mfrow = c(1,2))
-boxplot(houses$GBA, main="Gross Building Area", sub=paste("Outlier rows: ", boxplot.stats(houses$GBA)$out))
-
-boxplot(houses$CNDTN, main="Condition", sub=paste("Outlier rows: ", boxplot.stats(houses$CNDTN)$out))
-
-par(mfrow = c(1,2))
-boxplot(houses$LANDAREA, main="Land Area", sub=paste("Outlier rows: ", boxplot.stats(houses$LANDAREA)$out))
-
-boxplot(houses$PRICE, main="Price", sub=paste("Outlier rows: ", boxplot.stats(houses$PRICE)$out))
-
-# Boxplots to identify outliers
-
-boxplot(houses$BATHRM, main="Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BATHRM)$out))
-
-boxplot(houses$HF_BATHRM, main="Half Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$HF_BATHRM)$out))
-
-boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.stats(houses$ROOMS)$out))
-
-
+ggplot(houses, aes(x=LANDAREA, y=PRICE)) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Land Area", y="Price")
 
 ```
 
