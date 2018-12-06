@@ -133,19 +133,34 @@ ggplot(houses, aes(x = CNDTN))+
 
 # Boxplots to identify outliers
 
-par(mfrow = c(1,2))
-boxplot(houses$BATHRM, main="Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BATHRM)$out))
+ggplot(houses, aes(x=BATHRM, y=PRICE, color = factor(BATHRM))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Number of Bathrooms", y="Price")
+    
+ggplot(houses, aes(x=HF_BATHRM, y=PRICE, color = factor(HF_BATHRM))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Number of Half-Bathrooms", y="Price")
 
-boxplot(houses$HF_BATHRM, main="Half Bathrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$HF_BATHRM)$out))
+ggplot(houses, aes(x=ROOMS, y=PRICE, color = factor(ROOMS))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Number of Rooms", y="Price")
 
-par(mfrow = c(1,2))
-boxplot(houses$ROOMS, main="Rooms", sub=paste("Outlier rows: ", boxplot.stats(houses$ROOMS)$out))
+ggplot(houses, aes(x=BEDRM, y=PRICE, color = factor(BEDRM))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Number of Bedrooms", y="Price")
 
-boxplot(houses$BEDRM, main="Bedrooms", sub=paste("Outlier rows: ", boxplot.stats(houses$BEDRM)$out))
+#Because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense. But it looks busy. If I had more time I would figure out how to group them into decades
+ggplot(houses, aes(x=AYB, y=PRICE, color = factor(AYB))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
+  labs(x="Year Built", y="Price")
 
+ggplot(houses, aes(x=YR_RMDL, y=PRICE, color = factor(YR_RMDL))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
+  labs(x="Year Remodeled", y="Price") +
+  coord_flip()
 
-par(mfrow = c(1,2))
-boxplot(houses$AYB, main="Year Built", sub=paste("Outlier rows: ", boxplot.stats(houses$AYB)$out))
+#####
+
 
 boxplot(houses$YR_RMDL, main="Year Remodeled", sub=paste("Outlier rows: ", boxplot.stats(houses$YR_RMDL)$out))
 
