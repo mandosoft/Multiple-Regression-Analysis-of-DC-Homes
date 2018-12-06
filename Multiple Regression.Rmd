@@ -3,8 +3,8 @@ title: "Multiple Regression Analysis of D.C. Homes"
 author: "Thomas Townsley, John Carr, Matthew Lewis"
 date: "December 7th, 2018"
 output:
-  html_document: default
-  pdf_document: default
+pdf_document: default
+html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -18,17 +18,18 @@ library(corrplot)
 library(gridExtra)
 ```
 ## Abstract
-Utilizing a dataset with information on houses sold in the Washington D.C. area, we created a mutiple regression model that predicts the price of a home based on a number of numeric and categorical variables provided by the dataset. The dataset includes 2,000 observations of homes sold in the D.C area. After several cycles of processing and optimizing the parameters determined to be most useful in predicting the price of a home sold, the final model produces an R<sup>2</sup> value of 0.75, which we believe to be strong enough for consideration as a predictive tool for future home price forecasting. When running the predictor, three out of the five lines removed from the dataset are predicted acurately. We conclude that the multiple regression model is a strong predictor of home price and ultimately has a variety of applications to business problems involving the price of homes in the D.C. area. 
+
+Utilizing a dataset with information on houses sold in the Washington D.C. area, we created a mutiple regression model that predicts the price of a home based on a number of numeric and categorical variables provided by the dataset. The dataset includes 2,000 observations of homes sold. After several cycles of processing and optimizing the parameters determined to be most useful in predicting the price of a home sold, the final model produces an R<sup>2</sup> value of 0.75, which we believe to be strong enough for consideration as a predictive tool for future home price forecasting. When running the predictor, three out of the five lines removed from the dataset are predicted acurately. We conclude that the multiple regression model is a strong predictor of home price and ultimately has a variety of applications to business problems involving the price of homes in the D.C. area. 
 
 ## Introduction
 
-With our regression model, assuming we have pertinent data on a home in the D.C. area but not the price, we should be able to predict the price within a margin of error. Also, this model should be able to assess whether a home is overvalued or undervalued at a given date even if there is a price already associated with it. For example, this model would help the buyer or seller understand what would be a reasonable final bid price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data such as land area of the home, number of rooms, year built, etc. will power the predictive algorithm. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
+With our regression model, assuming we have pertinent data on a home in the D.C. area but not the price, we may predict the price within a margin of error. The model should be able to assess whether a home is overvalued or undervalued at a given date even if there is a price already associated with it. For example, this model would help the buyer or seller understand what would be a reasonable final bid price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data including land area of the home, number of rooms, year built, etc. will power the predictive algorithm. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
 
 ## Overview of the dataset
 
-Our dataset is titled *D.C. Residential Properties* and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018, for properties located in Washington, D.C. There are a number of variables that we beleive would be useful to us in achieving our goal, with "Condition" being the main categorical variable we use. We eliminated some variables that we decided would not be relevant or useful immediately. 
+Our dataset is titled *D.C. Residential Properties* and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018 for properties located in Washington, D.C. There are a number of numeric variables that we believe are beneficial to the model, with "Condition" being the main categorical variable we use. Variables not relevant or useful immediately were removed. 
 
-One way we manipulated the original dataset is by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We did this because we found little significance to SALEDATE as each date was unique, spreadout, and made it difficult to analyze model accuracy with thousands of p-scores. We hypothesized that there might be more significance in using individual parts of the dates at higher levels. However, We did keep the original SALEDATE column in the dataset, but did not use it for analysis.
+The original dataset was manipulated by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We found little significance to SALEDATE as each date was unique, spreadout, and made it difficult to analyze model accuracy with thousands of p-values. We hypothesize that there might be more significance in using individual parts of the dates at higher levels. The original SALEDATE column remains in the dataset, but it was not used for analysis.
 
 Description of variables: \newline
 
@@ -237,7 +238,7 @@ corrplot(corr_matrix, method = "circle", type = "upper", order = "hclust",
 
 ## Identification and Evaluation of Suitable Model
 
-We first began multiple linear regression with all the predictor variables utilized (except for SALEDATE). This gave us a baseline </sup> score to base feature transformation performance as well as any target variable transformations as well.
+We first began multiple linear regression with all the predictor variables utilized (except for SALEDATE). This gave us a baseline score to base variable transformation performance as well as any target variable transformations as well.
 
 ```{r 5.1, echo=FALSE}
 
@@ -252,7 +253,7 @@ summary(fit)
 ```
 Initially, we were surprised with an R<sup>2</sup> value of .6982 by using all variables with no transformations. We regarded this value as significant and established .6982 as our baseline for improvement.
 
-Judging by the p-values, ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH appeared to be potentially insignificant. It is also visible, that the estmiated model coefficients had two negative values, BEDRM and YR_RMDL. Intuitively, the more bedrooms a house has and the more recent remodelling was conducted, the higher the price should be. This means these two varaibles would have positive correlation with the target variable price. BEDRM, however, did still have a significant p-value. 
+Judging by the p-values, ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH appeared to be potentially insignificant. The estmiated model coefficients also had two negative values, BEDRM and YR_RMDL. Intuitively, the more bedrooms a house has and the more recent remodelling was conducted, the higher the price should be. This means these two varaibles would have positive correlation with the target variable price. BEDRM however, did still have a significant p-value. 
 
 To continue analysis of our base model, we also conducted an ANOVA test:
 ```{r 5.2, echo=FALSE}
@@ -312,15 +313,15 @@ A GVIF score of ten or more indicates multicollinearity. None of the variables w
 
 #### Model Improvement
 
-Now that we had analyzed our inital model and established areas of improvement, we then moved into refining our model. We first began with dropping variables that appeared to be insignificant according to high p-values. This included the variables: ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH. We began with the variable with the highest p-value and began dropping them from the model. If removing the variable decreased the R<sup>2</sup> value, we added the variable back and continued on to the next variable. The only positive result was dropping the variable AYB, which increased the R<sup>2</sup> score by .0002. Dropping ROOMS did not affect accuracy and removing the other variables lowered R<sup>2</sup>. We decided to keep the other variables and only drop AYB, which resulted in a new R<sup>2</sup> baseline at .6984.
+Once we analyzed our inital model and established areas of improvement, we began refining our model. We started by dropping variables that appeared to be insignificant according to their respective high p-values. This included the variables: ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH. If removing the variable decreased the R<sup>2</sup> value, we added the variable back in and continued on to the next variable. The only positive result was dropping the variable AYB, which increased the R<sup>2</sup> score by .0002. Dropping ROOMS did not affect accuracy and removing the other variables lowered the R<sup>2</sup>value. We decided to keep the other variables and only drop AYB, which resulted in a new R<sup>2</sup> baseline of .6984.
 
-We also considered the variables with negative coefficients that we outlined previously. YR_RMDL was already tested because of it's high p-value but we tested dropping BEDRM as well. This resulted in a lower R<sup>2</sup>, so we decided to keep the variable for the model. It could be the case, however, that in the region of this data set, having more bedrooms is undesirable past a certain point. This may be the case in a highly-populated with younger demographics.
+As mentioned previously, variables with negative coefficients were considered. YR_RMDL was already tested because of it's high p-value but we tested dropping BEDRM as well. This resulted in a lower R<sup>2</sup>, so the variable was kept for the model. It could be the case that within the district where this data set was created, having more bedrooms is undesirable past a certain point. This may be the case in a highly-populated metropolitan area with a concentrated younger demographic.
 
-Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For this data, we anticipated some correllation between variables. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have few, but large rooms and still have a high level of square footage. This could also be said for rooms and bedrooms. Our concusion was that multicolliearity may be present in similar data sets, but was not found, or significant, in our data of 2000 houses.
+Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For the data, we anticipated some correllation between variables. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have a few large rooms yet still have a high level of square footage. This could also be said for rooms and bedrooms. We postulate that multicolliearity may be present in similar data sets, but was not found - or significant in our data of 2000 houses.
 
-We then progressed onto transforming the remaining variables. We conducted Box-Cox test on each predicitng variable to understand if there was a transformation that would somewhat normalize that variable. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R<sup>2</sup>. Adding log(BEDRM + 1) and the log(GBA) brought our R<sup>2</sup> to .7269, which was an adequate improvement.
+Progressing onto transforming the remaining variables, we conducted a Box-Cox test on each predicitor variable to understand if there were transformations that would somewhat normalize them. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R<sup>2</sup>. Adding log(BEDRM + 1) and the log(GBA) brought our R<sup>2</sup> to .7269, which was a marked improvement.
 
-Next, we considered the target variable PRICE for transformation. According to our prelimminary tests, we could not conclude ANOVA assumptions two and three, that signaled to us that a target variable transformation may be necessary. We conducted a BOX-Cox test and received the following output:
+Next, we considered the target variable PRICE for transformation. According to our prelimminary tests, we could not conclude ANOVA assumptions two and three which signaled that a target variable transformation might be necessary. We conducted a Box-Cox test and received the following output:
 
 
 ```{r 5.7, echo=FALSE}
@@ -359,7 +360,7 @@ fit3 <- lm(data = houses, I(1/PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+
 #summary(fit3)
 
 ```
-A lambda value of 0.33 is roughly half way in between the log and sqrt transformation values. We tested both transformations and considered the resdiual plot for each transformation. Log actually lowered the R<sup>2</sup> to .6589 while sqrt increased the R<sup>2</sup> to .7481 Both residual plots greatly improved the residual distribution. We decided on the sqrt transformation because of it's increase in R<sup>2</sup> accuracy:
+A lambda value of 0.33 is roughly half way in between the $log$ and $sqrt$ transformation values. We tested both transformations and considered the residual plot for each transformation. $Log$ actually lowered the R<sup>2</sup> to .6589 while $sqrt$ increased the R<sup>2</sup> to .7481 Both residual plots greatly improved the residual distribution. We decided on the $sqrt$ transformation because of the increase in R<sup>2</sup> accuracy:
 ```{r 5.8, echo=FALSE}
 
 fit_final <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM  + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
@@ -377,7 +378,7 @@ With an R<sup>2</sup> value of .7481, our model accounts for roughly 75% of vari
 
 Also, as you can see, the plot of residuals looks much better and confirms the sqrt transformation aided our model.
 
-To confirm our efforts of dropping variables and transforming them improved our accuracy, we implemented AIC and BIC for our original model and our final model:
+To confirm that dropping variables and transforming them improved our accuracy, we implemented AIC and BIC for our original model and our final model:
 ```{r 5.9, echo=FALSE}
 
 #using AIC & BIC for model comparison
@@ -419,7 +420,7 @@ To analyze the accuracy of our model we predicted PRICE values for these 5 recor
 predict(fit_final, newdata = excl_rows, interval = "predict")
 
 ```
-Our prediction resulted in a predicted price value, the fit column, as well as upper and lower bounds of a 95% confidence interval. After comparing them to the actual prices, we saw that the first house (1589) and the third house (1082) had predicted prices that were not close to the actual prices. Also, for both these houses, the actual price did not fall into the interval for which we were 95% confident they would be using our model. The first and third houses had a predicted and actual price of $414,986, $68,000 and $1,138,524, 1,725,00 respectfully. To better understand these errors and for further analysis, we considered the descriptive statistics of the PRICE variable:
+Our prediction resulted in a predicted price value, the fit column, as well as upper and lower bounds at a 95% confidence interval. After comparing them to the actual prices, we saw that the first house (1589) and the third house (1082) had predicted prices that were not close to the actual prices. Also, for both these houses the actual price did not fall into the interval for which we were 95% confident they would be using our model. The first and third houses had a predicted and actual price of $414,986, $68,000 and $1,138,524, $1,725,00 respectfully. To better understand these errors and for further analysis, we considered the descriptive statistics of the PRICE variable:
 
 ```{r 6.3, echo=FALSE}
 summary(houses$PRICE)
@@ -428,15 +429,15 @@ Judging by this information, we saw that both these records, although not statis
 
 The other three houses fell comfortably within our confidence interval with the predicted price being within ~$100,000 of the actual price. These houses were much closer to the mean and were more typical repesentations of our data set.
 
-Based off of the prediction, we were satisfied that our model could accurately aid in predicting the price of a specific house. This is especially true of houses that are closer to the area mean as they are more likely to have a smaller error. Houses that may lay on the extremes of the data, as shown above, may be more prone to prediction errors. However, based on the analysis of our model's performance and goodness-of-fit, we deemed this model acceptable and could potentially aid a buyer or seller in assessing home value, market price, market trends, and a variety of other applications.
+Based on the prediction, we were satisfied that our model could accurately aid in predicting the price of a specific house. This is especially true of houses that are closer to the area mean as they are more likely to have a smaller error. Houses that may lay on the extremes of the data, as shown above, may be more prone to prediction errors. However, based on the analysis of our model's performance and goodness-of-fit, we deemed this model acceptable and could potentially aid a buyer or seller in assessing home value, market price, market trends, and a variety of other applications.
 
 ## Limitations and Assumptions
 
 One limitation to the original iteration of our dataset was the SALEDATE. As an independent variable there were too many for them to be significant or to evaluate each individually. Also, the format of SALEDATE did not work well, especially due to the "0:00" after each date, presumably a timestamp. As mentioned in section 2, we split this variable to create new variables for each part of the date. Doing so resulted in new significant variables that improved our model.
 
-In the future we would potentially include geographic data. In the original dataset there was longitude and latitude data, which was excluded from the dataset. Retrospectively, not being able to identify neighborhoods where homes are could be a limitation and including that data could make the model more accurate and useful.
+In the future we would potentially include geographic data. The original dataset included longitude and latitude data, which was excluded from the dataset. In retrospect, not being able to identify neighborhoods where homes are could be a limitation and including that data could make the model more accurate and useful.
 
-One assumption that we make with this dataset, and thus our model, is the "Condition" variable. I would be interested in knowing who determined the condition of each home, when and by what means of evaluation. Is there a standard for such an assessment? This seems like something that could be subjective. Also we notice that there is no "poor" condition - the lowest level is "Fair", which could perpetuate subjectivity.
+One assumption that we make with this dataset, and thus our model, is the "Condition" variable. Knowing what party determined the condition of each home along with when and by what criteria the evaluation occured would be of interest to determine its veracity as a variable. Is there an industry standard for such an assessment? This seems like something that could be subjective. Also we notice that there is no "poor" condition - the lowest level is "Fair", which could perpetuate subjectivity.
 
 
 
