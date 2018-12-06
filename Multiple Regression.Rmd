@@ -133,13 +133,14 @@ ggplot(houses, aes(x = CNDTN))+
 
 
 # Boxplots to identify outliers
+#For many of these we had to factor the variables within the boxplot to have a more accurate look at where the outliers are. For example, because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense.
 
 ggplot(houses, aes(x=BATHRM, y = PRICE, color = factor(BATHRM))) +
-  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
   labs(x="Number of Bathrooms", y="Price")
     
 ggplot(houses, aes(x=HF_BATHRM, y=PRICE, color = factor(HF_BATHRM))) +
-  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
   labs(x="Number of Half-Bathrooms", y="Price")
 
 ggplot(houses, aes(x=ROOMS, y=PRICE, color = factor(ROOMS))) +
@@ -150,7 +151,6 @@ ggplot(houses, aes(x=BEDRM, y=PRICE, color = factor(BEDRM))) +
   geom_boxplot(outlier.color = "black", outlier.size = 1) +
   labs(x="Number of Bedrooms", y="Price")
 
-#Because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense. But it looks busy. If I had more time I would figure out how to group them into decades
 
 ggplot(houses, aes(x=AYB, y=PRICE, color = factor(AYB))) +
   geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
@@ -221,9 +221,11 @@ grid.arrange(room_price_plot, year_price_plot, month_price_plot, day_price_plot,
 
 # Use corrplot to display a correlation matrix of that variables
 
-corr_matrix <- cor(data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEDAY, houses$SALEMONTH, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA))
+corr_matrix <- cor(data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA))
+colnames(corr_matrix) <- c("Half-bath", "Bathrooms", "Rooms", "Bedrooms", "Year Built", "Year Remodeled", "Price", "Sale Year", "Stories", "Landarea", "Building Area")
+rownames(corr_matrix) <- c("Half-bath", "Bathrooms", "Rooms", "Bedrooms", "Year Built", "Year Remodeled", "Price", "Sale Year", "Stories", "Landarea", "Building Area")
 corrplot(corr_matrix, type = "upper", order = "hclust", 
-         tl.col = "black", tl.srt = 45)
+         tl.col = "black", tl.srt = 36, insig = NULL)
 
 ```
 
