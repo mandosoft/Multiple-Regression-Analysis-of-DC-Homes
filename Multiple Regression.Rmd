@@ -72,24 +72,32 @@ summary(houses)
 
 #### Histograms of Predictor Variables
 
+There is normality to most of our variables with the exception of Year Sold and Year Remodeled, which are both right-skewed. This makes sense as Year Sold is actually the year in which the home was most recently sold and homes will be remodeled later, as more houses are being built they will be remodeled in later years.
+
+Another thing we noticed that Month Sold and Day Sold are relatively level. This could be why those two variables had no significance in our model.
+
 ```{r 4.2, echo=FALSE}
 
 require(gridExtra)
 
+#There is normality to most of our variables with the exception of Year Sold and Year Remodeled, which are both right-skewed. This makes sense as Year Sold is actually the year in which the home was most recently sold and homes will be remodeled later, as more houses are being built they will be remodeled in later years.
+
+#Another thing we noticed that Month Sold and Day Sold are relatively level. This could be why those two variables had no significance in our model.
+
 plot1 <- ggplot(houses, aes(x = BATHRM))+
-  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
   labs(x="Bathrooms", title="Bathrooms")
 
 plot2 <- ggplot(houses, aes(x = HF_BATHRM))+
-  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
   labs(x="Half Bathrooms", title="Half Bathrooms")
 
 plot3 <- ggplot(houses, aes(x = ROOMS))+
-  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
   labs(x="Rooms", title="Rooms")
 
 plot4 <- ggplot(houses, aes(x = BEDRM))+
-  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
   labs(x="Bed Rooms", title="Bed Rooms")
 
 grid.arrange(plot1, plot2, plot3, plot4, nrow =2, ncol = 2)
@@ -97,19 +105,19 @@ grid.arrange(plot1, plot2, plot3, plot4, nrow =2, ncol = 2)
 
 
 plot5 <- ggplot(houses, aes(x = AYB))+
-  geom_histogram(color="black", fill="light gray", binwidth = 10)+
+  geom_histogram(color="black", fill="light blue", binwidth = 10)+
   labs(x="Year Built", title="Year Built")
 
 plot6 <- ggplot(houses, aes(x = YR_RMDL))+
-  geom_histogram(color="black", fill="light gray", binwidth = 10)+
+  geom_histogram(color="black", fill="light blue", binwidth = 10)+
   labs(x="Year Remodeled", title="Year Remodeled")
 
 plot7 <- ggplot(houses, aes(x = STORIES))+
-  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
   labs(x="Stories", title="Stories")
 
 plot8 <- ggplot(houses, aes(x = SALEYEAR))+
-  geom_histogram(color="black", fill="light gray", binwidth = 5)+
+  geom_histogram(color="black", fill="light blue", binwidth = 5)+
   labs(x="Year Sold", title="Year Sold")
 
 grid.arrange(plot5, plot6, plot7, plot8, nrow =2, ncol = 2)
@@ -117,26 +125,26 @@ grid.arrange(plot5, plot6, plot7, plot8, nrow =2, ncol = 2)
 
 
 plot9 <- ggplot(houses, aes(x = SALEMONTH))+
-  geom_histogram(color="black", fill="light gray", binwidth = 1)+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
   labs(x="Month Sold", title="Month Sold")
 
 plot10 <- ggplot(houses, aes(x = SALEDAY))+
-  geom_histogram(color="black", fill="light gray", binwidth = 4)+
+  geom_histogram(color="black", fill="light blue", binwidth = 4)+
   labs(x="Day Sold", title="Day Sold")
 
 plot11 <- ggplot(houses, aes(x = GBA))+
-  geom_histogram(color="black", fill="light gray", binwidth = 100)+
+  geom_histogram(color="black", fill="light blue", binwidth = 100)+
   labs(x="Square Footage", title="Square Footage")
 
 plot12 <- ggplot(houses, aes(x = LANDAREA))+
-  geom_histogram(color="black", fill="light gray", binwidth = 100)+
+  geom_histogram(color="black", fill="light blue", binwidth = 100)+
   labs(x="Land Area", title="Land Area")
 
 grid.arrange(plot9, plot10, plot11, plot12, nrow =2, ncol = 2)
 
 
 ggplot(houses, aes(x = CNDTN))+
-  geom_bar(color="black", fill="light gray")+
+  geom_bar(color="black", fill="light blue")+
   labs(x="Condition of Home", title="Home Condition")
 
 ```
@@ -202,31 +210,71 @@ ggplot(houses, aes(x=LANDAREA, y=PRICE)) +
 
 ```
 
-#### Scatter Plots of Price by Room, Day, Month, and Year of Sale
+#### Scatter Plots
+We used a series of scatterplots for each variable compared to Price to look for linearity as well as how the independent variables affect the dependent. Similar to in the histograms, we saw little correlation with the SALEDAY and SALEMONTH variables that we created from SALEDATE. 
 
 ```{r 4.4, echo=FALSE}
 
 # scatterplots
-
+require(gridExtra)
 
 # price by room
-room_price <- ggplot(houses, aes(x = ROOMS, y = PRICE))
-room_price_plot <- room_price + geom_point()
+scat1 <- ggplot(houses, aes(x = ROOMS, y = PRICE)) + 
+  geom_point()
 
-# price by year
-year_price <- ggplot(houses, aes(x = SALEYEAR, y = PRICE))
-year_price_plot <- year_price + geom_point()
+# price by year most recently sold
+scat2 <- ggplot(houses, aes(x = SALEYEAR, y = PRICE)) + 
+  geom_point()
 
+# price by month of most recent sale date
+scat3 <- ggplot(houses, aes(x = SALEMONTH, y = PRICE)) + 
+  geom_point()
 
-# price by month
-month_price <- ggplot(houses, aes(x = SALEMONTH, y = PRICE))
-month_price_plot <- month_price + geom_point()
+# price by day of month of most recent sale date
+scat4 <- ggplot(houses, aes(x = SALEDAY, y = PRICE)) + 
+  geom_point()
 
-# price by day of month
-day_price <- ggplot(houses, aes(x = SALEDAY, y = PRICE))
-day_price_plot <-  day_price + geom_point()
+grid.arrange(scat1, scat2, scat3, scat4, nrow = 2,  ncol = 2)
 
-grid.arrange(room_price_plot, year_price_plot, month_price_plot, day_price_plot, nrow = 2,  ncol = 2)
+# price by number of bathrooms
+scat5 <- ggplot(houses, aes(x = BATHRM, y = PRICE)) + 
+  geom_point()
+
+# price by number of half-bathrooms
+scat6 <- ggplot(houses, aes(x = HF_BATHRM, y = PRICE)) + 
+  geom_point()
+
+# price by number of bedrooms
+scat7 <- ggplot(houses, aes(x = BEDRM, y = PRICE)) + 
+  geom_point()
+
+# price by year built
+scat8 <- ggplot(houses, aes(x = AYB, y = PRICE)) + 
+  geom_point()
+
+grid.arrange(scat5, scat6, scat7, scat8, nrow = 2,  ncol = 2)
+
+# price by year of remodel
+scat9 <- ggplot(houses, aes(x = YR_RMDL, y = PRICE)) + 
+  geom_point()
+
+# price by number of stories
+scat10 <- ggplot(houses, aes(x = STORIES, y = PRICE)) + 
+  geom_point()
+
+# price by Gross Building Area
+scat11 <- ggplot(houses, aes(x = GBA, y = PRICE)) + 
+  geom_point()
+
+# price by condition
+scat12 <- ggplot(houses, aes(x = CNDTN, y = PRICE)) + 
+  geom_point()
+
+grid.arrange(scat9, scat10, scat11, scat12, nrow = 2,  ncol = 2)
+
+# price by Land Area
+ggplot(houses, aes(x = LANDAREA, y = PRICE)) + 
+  geom_point()
 
 ```
 
