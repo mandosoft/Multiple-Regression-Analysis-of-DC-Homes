@@ -211,7 +211,7 @@ ggplot(houses, aes(x=LANDAREA, y=PRICE)) +
 ```
 
 #### Scatter Plots
-We used a series of scatterplots for each variable compared to Price to look for linearity as well as how the independent variables affect the dependent. 
+We used a series of scatterplots for each variable compared to Price to look for linearity as well as how the independent variables affect the dependent. Similar to in the histograms, we saw little correlation with the SALEDAY and SALEMONTH variables that we created from SALEDATE. 
 
 ```{r 4.4, echo=FALSE}
 
