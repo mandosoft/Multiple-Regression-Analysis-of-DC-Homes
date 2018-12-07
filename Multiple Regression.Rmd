@@ -72,9 +72,9 @@ summary(houses)
 
 #### Histograms of Predictor Variables
 
-There is normality to most of our variables with the exception of Year Sold and Year Remodeled, which are both right-skewed. This makes sense as Year Sold is actually the year in which the home was most recently sold and homes will be remodeled later, as more houses are being built they will be remodeled in later years.
+Most of our variables are normally distributed with the exception of Year Sold and Year Remodeled, which are both right-skewed. This makes sense as Year Sold is actually the year in which the home was most recently sold and homes will be remodeled later, as more houses are being built they will eventually be remodeled in later years.
 
-Another thing we noticed that Month Sold and Day Sold are relatively level. This could be why those two variables had no significance in our model.
+In addition, Month Sold and Day Sold are relatively level. This could be why those two variables had no significance in our model.
 
 ```{r 4.2, echo=FALSE}
 
@@ -147,9 +147,9 @@ ggplot(houses, aes(x = CNDTN))+
 
 #### Boxplots to Identify Outliers
 
-For many of these we had to factor the variables within the boxplot to have a more accurate and comprehensive look at where the outliers are. For example, because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense.
+For many of the box plots the variables were factored to have a produce a more accurate and comprehensive overview of where the outliers are. For example, because there are so many years in the dataset, lumping them all together for AYB & YR_RMDL does not make sense.
 
-In a number of these we can see one or two extreme outliers. These are likely homes that were sold for an unusually large price compared to similar homes. As we describe more below, it is possible that data related to the neighborhood of these extreme outliers could be informative.
+In a number of these plotsone or two extreme outliers are often present. These are likely homes that were sold for an unusually large price compared to similar homes. As we will elaborate upon further, it is possible that data related to the neighborhood of these extreme outliers could be informative.
 
 ```{r 4.3, echo=FALSE}
 
@@ -203,7 +203,7 @@ ggplot(houses, aes(x=LANDAREA, y=PRICE)) +
 
 #### Scatter Plots
 
-We used a series of scatterplots for each variable compared to Price to look for linearity as well as how the independent variables affect the dependent. Similar to in the histograms, we saw little correlation with the SALEDAY and SALEMONTH variables that we created from SALEDATE. 
+We used a series of scatterplots with each variable compared to Price to look for linearity as well as to show how the independent variables affect the dependent. Like the historgrams, we saw little correlation with the SALEDAY and SALEMONTH variables that we created from SALEDATE. 
 
 ```{r 4.4, echo=FALSE}
 
@@ -272,9 +272,9 @@ ggplot(houses, aes(x = LANDAREA, y = PRICE)) +
 
 #### Plot Displaying Correlation Values Between Variables
 
-Here we use corrplot to display a correlation matrix of the variables. The blue circles indicate a positive correlation between the variables and the red circles indicate a negative correlation. The size of the circle shows how much of a correlation. We felt that shading the colors by level of correlation made the correlations close to 0 difficult to see, and that it was uneccessary considering that even though there is no scale of the specific levels, we can gain an understanding by the size of the circles. 
+Here we use the corrplot library to display a correlation matrix of the variables. The blue circles indicate positive correlation between the variables and the red circles indicate negative correlation. The size of the circle is analagous to the strength of the correlation. 
 
-In this plot we can see a number of understandable correlations, such as bedrooms to rooms, or rooms to building area, for example. But one that gives us a useful understanding of the data is that building area has a large correlation to Price, where as the year the home was built does not.
+In this plot there are a number of correlations seemingly confirmed by intuition, such as bedrooms to rooms, or rooms to building area. One particularly useful insight from the corrplot is that building area has a large correlation to price, whereas the year the home was built does not.
 
 ```{r 4.5, echo = FALSE}
 
@@ -290,7 +290,7 @@ corrplot(corr_matrix, method = "circle", type = "upper", order = "hclust",
 
 ## Identification and Evaluation of Suitable Model
 
-We first began multiple linear regression with all the predictor variables utilized (except for SALEDATE). This gave us a baseline score to base variable transformation performance as well as any target variable transformations as well.
+We first began the multiple linear regression model with all the predictor variables utilized (except for SALEDATE). This gave us a baseline score to assess variable transformation performance as well as any target variable transformations as well.
 
 ```{r 5.1, echo=FALSE}
 
@@ -319,7 +319,7 @@ anova(fit)
 
 In analyzing regression models, an ANOVA test is used to analyze the amount of variation the model explains versus the amount of variation the model does not explain. This can be evaluated through the F-statistic and the resulting p-value. Looking at the output of the ANOVA table, we saw that AYB and SALEMONTH both had relatively low F-statistics and high p-values. This revealed to us that these variablesare were not beneficial in calculating PRICE and account for very little target variance.
 
-The ANOVA test also has three assumptions: All observations are independent of one another, the errors are normally distributed, and the variances of each group are equal. For the first assumption, we could resonably conclude that our observations were sampled independetly. Next, we decidied to check the second assumption of ANOVA: that all errors must be normally distributed. We plotted the residuals and annotated their distribution:
+The ANOVA test also has three assumptions: All observations are independent of one another, the errors are normally distributed, and the variances of each group are equal. For the first assumption, we could resonably conclude that our observations were sampled independently. Next, we decidied to check the second assumption of ANOVA: that all errors must be normally distributed. We plotted the residuals and annotated their distribution:
 
 ```{r 5.3, echo=FALSE}
 
@@ -474,7 +474,7 @@ To analyze the accuracy of our model, we predicted PRICE values for these 5 reco
 predict(fit_final, newdata = excl_rows, interval = "predict")
 
 ```
-Our prediction resulted in a predicted price value, the fit column, as well as upper and lower bounds at a 95% confidence interval. After comparing them to the actual prices, we saw that the first house (1589) and the third house (1082) had predicted prices that were not close to the actual prices. Also, for both these houses the actual price did not fall into the interval for which we were 95% confident they would be using our model. The first and third houses had a predicted and actual price of $414,986, $68,000 and $1,138,524, $1,725,00 respectfully. To better understand these errors and for further analysis, we considered the descriptive statistics of the PRICE variable:
+Our test resulted in a predicted price value, the fit column, as well as upper and lower bounds at a 95% confidence interval. After comparing them to the actual prices, we saw that the first house (1589) and the third house (1082) had predicted prices that were not close to the actual prices. Also, for both these houses the actual price did not fall into the interval for which we were 95% confident they would be using our model. The first and third houses had a predicted and actual price of $414,986, $68,000 and $1,138,524, $1,725,00 respectfully. To better understand these errors and for further analysis, we considered the descriptive statistics of the PRICE variable:
 
 ```{r 6.3, echo=FALSE}
 summary(houses$PRICE)
