@@ -80,10 +80,6 @@ Another thing we noticed that Month Sold and Day Sold are relatively level. This
 
 require(gridExtra)
 
-#There is normality to most of our variables with the exception of Year Sold and Year Remodeled, which are both right-skewed. This makes sense as Year Sold is actually the year in which the home was most recently sold and homes will be remodeled later, as more houses are being built they will be remodeled in later years.
-
-#Another thing we noticed that Month Sold and Day Sold are relatively level. This could be why those two variables had no significance in our model.
-
 plot1 <- ggplot(houses, aes(x = BATHRM))+
   geom_histogram(color="black", fill="light blue", binwidth = 1)+
   labs(x="Bathrooms", title="Bathrooms")
@@ -157,11 +153,6 @@ In a number of these we can see one or two extreme outliers. These are likely ho
 
 ```{r 4.3, echo=FALSE}
 
-# Boxplots to identify outliers
-#For many of these we had to factor the variables within the boxplot to have a more accurate and comprehensive look at where the outliers are. For example, because there are so many years, lumping them all together for AYB & YR_RMDL doesnt make sense.
-
-# In a number of these we can see one or two extreme outliers. These are likely homes that were sold for an unusually large price compared to similar homes. As we describe more below, it is possible that data related to the neighborhood of these extreme outliers could be informative.
-
 ggplot(houses, aes(x=BATHRM, y = PRICE, color = factor(BATHRM))) +
   geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
   labs(x="Number of Bathrooms", y="Price")
@@ -211,6 +202,7 @@ ggplot(houses, aes(x=LANDAREA, y=PRICE)) +
 ```
 
 #### Scatter Plots
+
 We used a series of scatterplots for each variable compared to Price to look for linearity as well as how the independent variables affect the dependent. Similar to in the histograms, we saw little correlation with the SALEDAY and SALEMONTH variables that we created from SALEDATE. 
 
 ```{r 4.4, echo=FALSE}
@@ -286,10 +278,6 @@ In this plot we can see a number of understandable correlations, such as bedroom
 
 ```{r 4.5, echo = FALSE}
 
-# Here we use corrplot to display a correlation matrix of the variables. The blue circles indicate a positive correlation between the variables and the red circles indicate a negative correlation. The size of the circle shows how much of a correlation. We felt that shading the colors by level of correlation made the correlations close to 0 difficult to see, and that it was uneccessary considering that even though there is no scale of the specific levels, we can gain an understanding by the size of the circles. 
-
-# In this plot we can see a number of understandable correlations, such as bedrooms to rooms, or rooms to building area, for example. But one that gives us a useful understanding of the data is that building area has a large correlation to Price, where as the year the home was built does not.
-
 corr_matrix <- cor(data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA))
 colnames(corr_matrix) <- c("Half-bath", "Bathrooms", "Rooms", "Bedrooms", "Year Built", "Year Remodeled", "Price", "Sale Year", "Stories", "Landarea", "Building Area")
 rownames(corr_matrix) <- c("Half-bath", "Bathrooms", "Rooms", "Bedrooms", "Year Built", "Year Remodeled", "Price", "Sale Year", "Stories", "Landarea", "Building Area")
@@ -320,6 +308,7 @@ Initially, we were surprised with an R<sup>2</sup> value of 0.6982 by using all 
 Judging by the p-values, ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH appeared to be potentially insignificant. The estmiated model coefficients also had two negative values, BEDRM and YR_RMDL. Intuitively, the more bedrooms a house has and the more recent remodelling was conducted, the higher the price should be. This means these two varaibles would have positive correlation with the target variable price. BEDRM however, did still have a significant p-value. 
 
 To continue analysis of our base model, we also conducted an Analysis of Variance (ANOVA) test:
+
 ```{r 5.2, echo=FALSE}
 
 # Review ANOVA and compare F statistic
@@ -384,7 +373,7 @@ As mentioned previously, variables with negative coefficients were considered. Y
 
 Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For the data, we anticipated some correllation between variables and noticed small correlations during our analysis of our correlation plot. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have a few large rooms yet still have a high level of square footage. This could also be said for rooms and bedrooms. We postulate that multicolliearity may be present in similar data sets, but was not found - or significant in our data of 2000 houses.
 
-Progressing onto transforming the remaining variables, we conducted a Box-Cox test on each predicitor variable to understand if there were transformations that would somewhat normalize them. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R<sup>2</sup>. Adding log(BEDRM + 1) and the log(GBA) brought our R<sup>2</sup> to .7269, which was a marked improvement.
+Progressing onto transforming the remaining variables, we conducted a Box-Cox test on each predicitor variable to understand if there were transformations that would somewhat normalize them. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R<sup>2</sup>. Adding $log$(BEDRM + 1) and the $log$(GBA) brought our R<sup>2</sup> to .7269, which was a marked improvement.
 
 Next, we considered the target variable PRICE for transformation. According to our prelimminary tests, we could not conclude ANOVA assumptions two and three which signaled that a target variable transformation might be necessary. We conducted a Box-Cox test and received the following output:
 
@@ -455,7 +444,7 @@ cat("Final Model BIC: ", BIC(fit_final))
 # The AIC and BIC for fit_final are both lower, so that is the better model
 
 ```
-Since AIC and BIC are higher for our final model, our model adjustments increase in accuracy is confirmed.
+Since AIC and BIC are lower for our final model, our final model is confirmed as the best model.
 
 
 #### Final Model
@@ -463,7 +452,7 @@ Since AIC and BIC are higher for our final model, our model adjustments increase
 
 $\widehat{Y} = -49280 + 56.94X_1 + 35.80X_2 + -38.24X_3 + 112.40X_4 + 60.61X_5 + 3.52X_6 + 1.44X_7 + 25.00X_8 + 14.45X_9 + -99.70X_{10} + 403.7X_{11} + 85.75X_{12} + 65.30X_{13} + 14.83X_{14} + .049X_{15} + \varepsilon$
 
-Where X values are BATHRM, HF_BATHRM, BEDRM, log(BEDRM+1), STORIES, SALEMONTH, SALEDAY, SALEYEAR, GBA, log(GBA), CNDTN-AVERAGE, CNDTN-GOOD, CNDTN-VERYGOOD, CNDTN-EXCELLENT, and LANDAREA respectfully.
+Where X values are BATHRM, HF_BATHRM, BEDRM, $log$(BEDRM+1), STORIES, SALEMONTH, SALEDAY, SALEYEAR, GBA, $log$(GBA), CNDTN-AVERAGE, CNDTN-GOOD, CNDTN-VERYGOOD, CNDTN-EXCELLENT, and LANDAREA respectfully.
 
 
 ## Application of the Model
@@ -475,7 +464,7 @@ At the beginning of our analysis, we removed five records to test our final mode
 excl_rows
 ```
 
-To analyze the accuracy of our model we predicted PRICE values for these 5 records and compared them to the actual values.
+To analyze the accuracy of our model, we predicted PRICE values for these 5 records and compared them to the actual values.
 
 ```{r 6.2, echo=FALSE}
 
@@ -498,7 +487,7 @@ Based on the prediction, we were satisfied that our model could accurately aid i
 
 ## Limitations and Assumptions
 
-One limitation to the original iteration of our dataset was the SALEDATE. As an independent variable there were too many for them to be significant or to evaluate each individually. Also, the format of SALEDATE did not work well, especially due to the "0:00" after each date, presumably a timestamp. As mentioned in section 2, we split this variable to create new variables for each part of the date. Doing so resulted in new significant variables that improved our model.
+One limitation to the original iteration of our dataset was the SALEDATE. As an independent variable there were too many for them to be significant or to evaluate each individually. Also, the format of SALEDATE did not work well, especially due to the "0:00" after each date, presumably a timestamp. As mentioned in section two, we split this variable to create new variables for each part of the date. Doing so resulted in new significant variables that improved our model.
 
 In the future we would potentially include geographic data. The original dataset included longitude and latitude data, which was excluded from the dataset. In retrospect, not being able to identify neighborhoods where homes are could be a limitation and including that data could make the model more accurate and useful.
 
