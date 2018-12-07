@@ -1,0 +1,497 @@
+---
+title: "Multiple Regression Analysis of D.C. Homes"
+author: "Thomas Townsley, John Carr, Matthew Lewis"
+date: "December 7th, 2018"
+output:
+pdf_document: default
+html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(car)
+library(broom)
+library(corrplot)
+library(gridExtra)
+```
+## Abstract
+
+Utilizing a dataset with information on houses sold in the Washington D.C. area, we created a mutiple regression model that predicts the price of a home based on a number of numeric and categorical variables provided by the dataset. The dataset includes 2,000 observations of homes sold. After several cycles of processing and optimizing the parameters determined to be most useful in predicting the price of a home sold, the final model produces an R<sup>2</sup> value of 0.75, which we believe to be strong enough for consideration as a predictive tool for future home price forecasting. When running the predictor, three out of the five lines removed from the dataset are predicted acurately. We conclude that the multiple regression model is a strong predictor of home price and ultimately has a variety of applications to business problems involving the price of homes in the D.C. area. 
+
+## Introduction
+
+With our regression model, assuming we have pertinent data on a home in the D.C. area but not the price, we may predict the price within a margin of error. The model should be able to assess whether a home is overvalued or undervalued at a given date even if there is a price already associated with it. For example, this model would help the buyer or seller understand what would be a reasonable final bid price. This would inform the amount a buyer could/should offer, or the price a seller could justifiably list the home at. Data including land area of the home, number of rooms, year built, etc. will power the predictive algorithm. As we began the discovery of this project, we anticipated that variables such as land area and number of rooms would be the most significant.
+
+## Overview of the dataset
+
+Our dataset is titled *D.C. Residential Properties* and was acquired on kaggle.com. This dataset shows real property information, including most recent sales prices as of July 2018 for properties located in Washington, D.C. There are a number of numeric variables that we believe are beneficial to the model, with "Condition" being the main categorical variable we use. Variables not relevant or useful immediately were removed. 
+
+The original dataset was manipulated by transforming the SALEDATE variable into separate variables for SALEYEAR, SALEMONTH and SALEDAY. We found little significance to SALEDATE as each date was unique, spreadout, and made it difficult to analyze model accuracy with thousands of p-values. We hypothesize that there might be more significance in using individual parts of the dates at higher levels. The original SALEDATE column remains in the dataset, but it was not used for analysis.
+
+Description of variables: \newline
+
+BATHRM (numeric): Number of full bathrooms \newline
+HF_BATHRM (numeric): Number of half bathrooms (no bathtub or shower) \newline
+ROOMS (numeric): Total number of rooms \newline
+BEDRM (numeric): Number of bedrooms \newline
+AYB (numeric): The earliest time the main portion of the building was built \newline
+YR_RMDL (numeric): Year structure was remodeled \newline
+STORIES (numeric): Number of stories in primary dwelling \newline
+SALEDATE (date): Date of most recent sale \newline
+SALEMONTH (numeric): Column we created for the calendar month of the most recent sale \newline
+SALEDAY (numeric): Column we created for the calendar day of the most recent sale \newline
+SALEYEAR (numeric): Column we created for the calendar year of the most recent sale \newline
+GBA (numeric): Gross building area in square feet \newline
+CNDTN (factor): Condition \newline
+LANDAREA (numeric): Land area of property in square feet \newline
+PRICE (numeric): Price of most recent sale \newline
+
+```{r 3.1, echo=FALSE}
+
+houses <- read.csv("DC_properties_clean.csv")
+
+excl_rows <- houses[sample(nrow(houses), 5), ] # Exclude Random Rows
+houses <- setdiff(houses, excl_rows)
+
+houses$CNDTN <- factor(houses$CNDTN, order = TRUE, levels = c("Fair", "Average", "Good", "Very Good", "Excellent"))
+
+```
+
+## Exploration of Dataset
+
+#### Descriptive Satistics
+
+```{r 4.1, echo=FALSE}
+
+summary(houses)
+
+```
+
+#### Histograms of Predictor Variables
+
+Most of our variables are normally distributed with the exception of Year Sold and Year Remodeled, which are both right-skewed. This makes sense as Year Sold is actually the year in which the home was most recently sold and homes will be remodeled later, as more houses are being built they will eventually be remodeled in later years.
+
+In addition, Month Sold and Day Sold are relatively level. This could be why those two variables had no significance in our model.
+
+```{r 4.2, echo=FALSE}
+
+require(gridExtra)
+
+plot1 <- ggplot(houses, aes(x = BATHRM))+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
+  labs(x="Bathrooms", title="Bathrooms")
+
+plot2 <- ggplot(houses, aes(x = HF_BATHRM))+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
+  labs(x="Half Bathrooms", title="Half Bathrooms")
+
+plot3 <- ggplot(houses, aes(x = ROOMS))+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
+  labs(x="Rooms", title="Rooms")
+
+plot4 <- ggplot(houses, aes(x = BEDRM))+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
+  labs(x="Bed Rooms", title="Bed Rooms")
+
+grid.arrange(plot1, plot2, plot3, plot4, nrow =2, ncol = 2)
+
+
+
+plot5 <- ggplot(houses, aes(x = AYB))+
+  geom_histogram(color="black", fill="light blue", binwidth = 10)+
+  labs(x="Year Built", title="Year Built")
+
+plot6 <- ggplot(houses, aes(x = YR_RMDL))+
+  geom_histogram(color="black", fill="light blue", binwidth = 10)+
+  labs(x="Year Remodeled", title="Year Remodeled")
+
+plot7 <- ggplot(houses, aes(x = STORIES))+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
+  labs(x="Stories", title="Stories")
+
+plot8 <- ggplot(houses, aes(x = SALEYEAR))+
+  geom_histogram(color="black", fill="light blue", binwidth = 5)+
+  labs(x="Year Sold", title="Year Sold")
+
+grid.arrange(plot5, plot6, plot7, plot8, nrow =2, ncol = 2)
+
+
+
+plot9 <- ggplot(houses, aes(x = SALEMONTH))+
+  geom_histogram(color="black", fill="light blue", binwidth = 1)+
+  labs(x="Month Sold", title="Month Sold")
+
+plot10 <- ggplot(houses, aes(x = SALEDAY))+
+  geom_histogram(color="black", fill="light blue", binwidth = 4)+
+  labs(x="Day Sold", title="Day Sold")
+
+plot11 <- ggplot(houses, aes(x = GBA))+
+  geom_histogram(color="black", fill="light blue", binwidth = 100)+
+  labs(x="Square Footage", title="Square Footage")
+
+plot12 <- ggplot(houses, aes(x = LANDAREA))+
+  geom_histogram(color="black", fill="light blue", binwidth = 100)+
+  labs(x="Land Area", title="Land Area")
+
+grid.arrange(plot9, plot10, plot11, plot12, nrow =2, ncol = 2)
+
+
+ggplot(houses, aes(x = CNDTN))+
+  geom_bar(color="black", fill="light blue")+
+  labs(x="Condition of Home", title="Home Condition")
+
+```
+
+#### Boxplots to Identify Outliers
+
+For many of the box plots the variables were factored to have a produce a more accurate and comprehensive overview of where the outliers are. For example, because there are so many years in the dataset, lumping them all together for AYB & YR_RMDL does not make sense.
+
+In a number of these plotsone or two extreme outliers are often present. These are likely homes that were sold for an unusually large price compared to similar homes. As we will elaborate upon further, it is possible that data related to the neighborhood of these extreme outliers could be informative.
+
+```{r 4.3, echo=FALSE}
+
+ggplot(houses, aes(x=BATHRM, y = PRICE, color = factor(BATHRM))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
+  labs(x="Number of Bathrooms", y="Price")
+    
+ggplot(houses, aes(x=HF_BATHRM, y=PRICE, color = factor(HF_BATHRM))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
+  labs(x="Number of Half-Bathrooms", y="Price")
+
+ggplot(houses, aes(x=ROOMS, y=PRICE, color = factor(ROOMS))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Number of Rooms", y="Price")
+
+ggplot(houses, aes(x=BEDRM, y=PRICE, color = factor(BEDRM))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Number of Bedrooms", y="Price")
+
+
+ggplot(houses, aes(x=AYB, y=PRICE, color = factor(AYB))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
+  labs(x="Year Built", y="Price")
+
+ggplot(houses, aes(x=YR_RMDL, y=PRICE, color = factor(YR_RMDL))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1, show.legend = FALSE) +
+  labs(x="Year Remodeled", y="Price") +
+  coord_flip()
+
+ggplot(houses, aes(x=STORIES, y=PRICE, color = factor(STORIES))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Number of Stories", y="Price")
+
+ggplot(houses, aes(x=SALEYEAR, y=PRICE, color = factor(SALEYEAR))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Year of Most Recent Sale", y="Price")
+
+ggplot(houses, aes(x=GBA, y=PRICE)) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Gross Building Area", y="Price")
+
+ggplot(houses, aes(x=CNDTN, y=PRICE, color = factor(CNDTN))) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Condition", y="Price")
+
+ggplot(houses, aes(x=LANDAREA, y=PRICE)) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Land Area", y="Price")
+
+```
+
+#### Scatter Plots
+
+We used a series of scatterplots with each variable compared to Price to look for linearity as well as to show how the independent variables affect the dependent. Like the historgrams, we saw little correlation with the SALEDAY and SALEMONTH variables that we created from SALEDATE. 
+
+```{r 4.4, echo=FALSE}
+
+# scatterplots
+require(gridExtra)
+
+# price by room
+scat1 <- ggplot(houses, aes(x = ROOMS, y = PRICE)) + 
+  geom_point()
+
+# price by year most recently sold
+scat2 <- ggplot(houses, aes(x = SALEYEAR, y = PRICE)) + 
+  geom_point()
+
+# price by month of most recent sale date
+scat3 <- ggplot(houses, aes(x = SALEMONTH, y = PRICE)) + 
+  geom_point()
+
+# price by day of month of most recent sale date
+scat4 <- ggplot(houses, aes(x = SALEDAY, y = PRICE)) + 
+  geom_point()
+
+grid.arrange(scat1, scat2, scat3, scat4, nrow = 2,  ncol = 2)
+
+# price by number of bathrooms
+scat5 <- ggplot(houses, aes(x = BATHRM, y = PRICE)) + 
+  geom_point()
+
+# price by number of half-bathrooms
+scat6 <- ggplot(houses, aes(x = HF_BATHRM, y = PRICE)) + 
+  geom_point()
+
+# price by number of bedrooms
+scat7 <- ggplot(houses, aes(x = BEDRM, y = PRICE)) + 
+  geom_point()
+
+# price by year built
+scat8 <- ggplot(houses, aes(x = AYB, y = PRICE)) + 
+  geom_point()
+
+grid.arrange(scat5, scat6, scat7, scat8, nrow = 2,  ncol = 2)
+
+# price by year of remodel
+scat9 <- ggplot(houses, aes(x = YR_RMDL, y = PRICE)) + 
+  geom_point()
+
+# price by number of stories
+scat10 <- ggplot(houses, aes(x = STORIES, y = PRICE)) + 
+  geom_point()
+
+# price by Gross Building Area
+scat11 <- ggplot(houses, aes(x = GBA, y = PRICE)) + 
+  geom_point()
+
+# price by condition
+scat12 <- ggplot(houses, aes(x = CNDTN, y = PRICE)) + 
+  geom_point()
+
+grid.arrange(scat9, scat10, scat11, scat12, nrow = 2,  ncol = 2)
+
+# price by Land Area
+ggplot(houses, aes(x = LANDAREA, y = PRICE)) + 
+  geom_point()
+
+```
+
+#### Plot Displaying Correlation Values Between Variables
+
+Here we use the corrplot library to display a correlation matrix of the variables. The blue circles indicate positive correlation between the variables and the red circles indicate negative correlation. The size of the circle is analagous to the strength of the correlation. 
+
+In this plot there are a number of correlations seemingly confirmed by intuition, such as bedrooms to rooms, or rooms to building area. One particularly useful insight from the corrplot is that building area has a large correlation to price, whereas the year the home was built does not.
+
+```{r 4.5, echo = FALSE}
+
+corr_matrix <- cor(data.frame(houses$HF_BATHRM, houses$BATHRM, houses$ROOMS, houses$BEDRM,houses$AYB, houses$YR_RMDL, houses$PRICE, houses$SALEYEAR, houses$STORIES, houses$LANDAREA, houses$GBA))
+colnames(corr_matrix) <- c("Half-bath", "Bathrooms", "Rooms", "Bedrooms", "Year Built", "Year Remodeled", "Price", "Sale Year", "Stories", "Landarea", "Building Area")
+rownames(corr_matrix) <- c("Half-bath", "Bathrooms", "Rooms", "Bedrooms", "Year Built", "Year Remodeled", "Price", "Sale Year", "Stories", "Landarea", "Building Area")
+corrplot(corr_matrix, method = "circle", type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 36, insig = NULL, col = c("red", "blue"))
+
+```
+
+
+
+## Identification and Evaluation of Suitable Model
+
+We first began the multiple linear regression model with all the predictor variables utilized (except for SALEDATE). This gave us a baseline score to assess variable transformation performance as well as any target variable transformations as well.
+
+```{r 5.1, echo=FALSE}
+
+# 5. Identification and evaluation of suitable model
+
+fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+
+# Review p-values, check sign of estimates
+
+summary(fit)
+
+```
+Initially, we were surprised with an R<sup>2</sup> value of 0.6982 by using all variables with no transformations. We regarded this value as significant and established 0.6982 as our baseline for improvement.
+
+Judging by the p-values, ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH appeared to be potentially insignificant. The estmiated model coefficients also had two negative values, BEDRM and YR_RMDL. Intuitively, the more bedrooms a house has and the more recent remodelling was conducted, the higher the price should be. This means these two varaibles would have positive correlation with the target variable price. BEDRM however, did still have a significant p-value. 
+
+To continue analysis of our base model, we also conducted an Analysis of Variance (ANOVA) test:
+
+```{r 5.2, echo=FALSE}
+
+# Review ANOVA and compare F statistic
+
+anova(fit)
+
+```
+
+In analyzing regression models, an ANOVA test is used to analyze the amount of variation the model explains versus the amount of variation the model does not explain. This can be evaluated through the F-statistic and the resulting p-value. Looking at the output of the ANOVA table, we saw that AYB and SALEMONTH both had relatively low F-statistics and high p-values. This revealed to us that these variablesare were not beneficial in calculating PRICE and account for very little target variance.
+
+The ANOVA test also has three assumptions: All observations are independent of one another, the errors are normally distributed, and the variances of each group are equal. For the first assumption, we could resonably conclude that our observations were sampled independently. Next, we decidied to check the second assumption of ANOVA: that all errors must be normally distributed. We plotted the residuals and annotated their distribution:
+
+```{r 5.3, echo=FALSE}
+
+# Residual plot and look for non-constant variance
+
+fit.df <- augment(fit)
+ggplot(fit.df, aes(x = .fitted, y = .resid))+
+  geom_point()+
+  geom_hline(yintercept = 0, linetype = 2)+
+  labs( x = "Fitted Values", y = "Residuals")
+
+```
+
+The plot above clearly shows that our model did not have normally distributed errors. To confirm this formally, we conducted a Shapiro-Wilk test which checks for the normality of residuals:
+
+```{r 5.4, echo=FALSE}
+# Shapiro-Wilk test for normality
+
+shapiro.test(fit$residuals)
+
+```
+Since the p-value for the Shapiro-Wilk test was essentially zero, this indicated our model did not have normal residuals, which confirms the information from the residual plot.
+
+Before we began model improvement, we checked for the third assumption of ANOVA, that the variances of each group were equal. We conducted a Non-Constant Variance test:
+```{r 5.5, echo=FALSE}
+# ncvTest for constant variance
+
+ncvTest(fit)
+
+```
+The practically zero p-value indicated that we could not assume equal variances with our model.
+
+These tests and exploratory analysis of our inital linear regression model revealed to us we could not validate ANOVA assumption number two or three. This led us to the conclusion that we needed to conduct a Box-Cox test and appropriately transform our target variable to account for these issues.
+
+The last model analysis we performed was reviewing the Variance Inflation Factors for evidence of multicollinearity.
+```{r 5.6, echo=FALSE}
+
+# Variance Inflation Factor (used to identify multicllinearity >= 10)
+
+vif(fit)
+
+```
+
+A GVIF score of ten or more indicates multicollinearity. None of the variables were close to these thresholds, so multicollinearity was not present among our features.
+
+#### Model Improvement
+
+Once we analyzed our inital model and established areas of improvement, we began refining our model. We started by dropping variables that appeared to be insignificant according to their respective high p-values. This included the variables: ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH. If removing the variable decreased the R<sup>2</sup> value, we added the variable back in and continued on to the next variable. The only positive result was dropping the variable AYB, which increased the R<sup>2</sup> score by .0002. Dropping ROOMS did not affect accuracy and removing the other variables lowered the R<sup>2</sup>value. We decided to keep the other variables and only drop AYB, which resulted in a new R<sup>2</sup> baseline of .6984.
+
+As mentioned previously, variables with negative coefficients were considered. YR_RMDL was already tested because of it's high p-value but we tested dropping BEDRM as well. This resulted in a lower R<sup>2</sup>, so the variable was kept for the model. It could be the case that within the district where this data set was created, having more bedrooms is undesirable past a certain point. This may be the case in a highly-populated metropolitan area with a concentrated younger demographic.
+
+Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For the data, we anticipated some correllation between variables and noticed small correlations during our analysis of our correlation plot. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have a few large rooms yet still have a high level of square footage. This could also be said for rooms and bedrooms. We postulate that multicolliearity may be present in similar data sets, but was not found - or significant in our data of 2000 houses.
+
+Progressing onto transforming the remaining variables, we conducted a Box-Cox test on each predicitor variable to understand if there were transformations that would somewhat normalize them. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R<sup>2</sup>. Adding $log$(BEDRM + 1) and the $log$(GBA) brought our R<sup>2</sup> to .7269, which was a marked improvement.
+
+Next, we considered the target variable PRICE for transformation. According to our prelimminary tests, we could not conclude ANOVA assumptions two and three which signaled that a target variable transformation might be necessary. We conducted a Box-Cox test and received the following output:
+
+
+```{r 5.7, echo=FALSE}
+# Review R2 value
+# From summary above: adjusted R^2 = .6984
+
+# Drop non-significant predictor variables (Droped AYB: +.0002, Rooms: No change, other lower)
+fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  +  BEDRM + YR_RMDL + STORIES + SALEMONTH + SALEDAY + SALEYEAR + GBA + CNDTN + LANDAREA)
+#summary(fit)
+
+# If multicollinearity is present, drop one correlated variable (None present)
+
+#Variable Transformations
+#powerTransform(houses$HF_BATHRM+1) # .776
+#powerTransform(houses$BEDRM+1) # -.130
+#powerTransform(houses$STORIES+1) # -2.084
+#powerTransform(houses$SALEMONTH) # .809
+#powerTransform(houses$SALEYEAR-1990) # 1.48 - didn't help
+#powerTransform(houses$GBA) # -.08 -> LOG
+#powerTransform(houses$LANDAREA) # .35 -> SQRT
+
+fit <- lm(data = houses, PRICE ~  BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+#summary(fit) # R^2 increased to .7269
+
+# Transform the outcome variable if the residual plot looks suspicious
+powerTransform(houses$PRICE) #.33 -> sqrt
+
+# log lowers R2: .6589
+fit1 <- lm(data = houses, log(PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+#summary(fit1)
+# sqrt increase R2: .7481, drop YR_RMDL + .0001
+fit2 <- lm(data = houses, sqrt(PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+#summary(fit2)
+# inverse drastically decrease
+fit3 <- lm(data = houses, I(1/PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+#summary(fit3)
+
+```
+A lambda value of 0.33 is roughly half way in between the $log$ and $sqrt$ transformation values. We tested both transformations and considered the residual plot for each transformation. $Log$ actually lowered the R<sup>2</sup> to 0.6589 while $sqrt$ increased the R<sup>2</sup> to 0.7481 Both residual plots greatly improved the residual distribution. We decided on the $sqrt$ transformation because of the increase in R<sup>2</sup> accuracy:
+```{r 5.8, echo=FALSE}
+
+fit_final <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM  + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
+summary(fit_final) # R^2 increased to .7481
+
+fit_final.df <- augment(fit_final)
+ggplot(fit_final.df, aes(x = .fitted, y = .resid))+
+  geom_point()+
+  geom_hline(yintercept = 0, linetype = 2)+
+  labs( x = "Fitted Values", y = "Residuals")
+
+```
+
+With an R<sup>2</sup> value of 0.7481, our model accounts for roughly 75% of variation in price from the predicting variables. This is the highest we were able to get the R<sup>2</sup> value following the process outlined above.
+
+Also, as you can see, the plot of residuals looks much better and confirms the sqrt transformation aided our model.
+
+To confirm that dropping variables and transforming them improved our accuracy, we implemented AIC and BIC for our original model and our final model. AIC is used to try to select the model which most adequately assesses the unkown, while BIC is used to find the model which assesses the true value :
+```{r 5.9, echo=FALSE}
+
+#using AIC & BIC for model comparison
+cat("Initial Model AIC: ", AIC(fit))
+cat("Initial Model BIC: ", BIC(fit))
+cat("Final Model AIC: ", AIC(fit_final))
+cat("Final Model BIC: ", BIC(fit_final))
+
+# The AIC and BIC for fit_final are both lower, so that is the better model
+
+```
+Since AIC and BIC are lower for our final model, our final model is confirmed as the best model.
+
+
+#### Final Model
+
+
+$\widehat{Y} = -49280 + 56.94X_1 + 35.80X_2 + -38.24X_3 + 112.40X_4 + 60.61X_5 + 3.52X_6 + 1.44X_7 + 25.00X_8 + 14.45X_9 + -99.70X_{10} + 403.7X_{11} + 85.75X_{12} + 65.30X_{13} + 14.83X_{14} + .049X_{15} + \varepsilon$
+
+Where X values are BATHRM, HF_BATHRM, BEDRM, $log$(BEDRM+1), STORIES, SALEMONTH, SALEDAY, SALEYEAR, GBA, $log$(GBA), CNDTN-AVERAGE, CNDTN-GOOD, CNDTN-VERYGOOD, CNDTN-EXCELLENT, and LANDAREA respectfully.
+
+
+## Application of the Model
+
+At the beginning of our analysis, we removed five records to test our final model. Here are those records that we set aside for prediction:
+
+```{r 6.1, echo=FALSE}
+
+excl_rows
+```
+
+To analyze the accuracy of our model, we predicted PRICE values for these 5 records and compared them to the actual values.
+
+```{r 6.2, echo=FALSE}
+
+# 6. Application of the model 
+
+# Test on excluded rows
+predict(fit_final, newdata = excl_rows, interval = "predict")
+
+```
+Our test resulted in a predicted price value, the fit column, as well as upper and lower bounds at a 95% confidence interval. After comparing them to the actual prices, we saw that the first house (1589) and the third house (1082) had predicted prices that were not close to the actual prices. Also, for both these houses the actual price did not fall into the interval for which we were 95% confident they would be using our model. The first and third houses had a predicted and actual price of $414,986, $68,000 and $1,138,524, $1,725,00 respectfully. To better understand these errors and for further analysis, we considered the descriptive statistics of the PRICE variable:
+
+```{r 6.3, echo=FALSE}
+summary(houses$PRICE)
+```
+Judging by this information, we saw that both these records, although not statistically outliers, are significantly far from the median and mean. The first house lies near the bottom of the first quartile while the third house lies near the top of the fourth quartile. Both of these values are statistically uncommon for our data and therefore would be difficult to accurately predict.
+
+The other three houses fell comfortably within our confidence interval with the predicted price being within ~$100,000 of the actual price. These houses were much closer to the mean and were more typical repesentations of our data set.
+
+Based on the prediction, we were satisfied that our model could accurately aid in predicting the price of a specific house. This is especially true of houses that are closer to the area mean as they are more likely to have a smaller error. Houses that may lay on the extremes of the data, as shown above, may be more prone to prediction errors. However, based on the analysis of our model's performance and goodness-of-fit, we deemed this model acceptable and could potentially aid a buyer or seller in assessing home value, market price, market trends, and a variety of other applications.
+
+## Limitations and Assumptions
+
+One limitation to the original iteration of our dataset was the SALEDATE. As an independent variable there were too many for them to be significant or to evaluate each individually. Also, the format of SALEDATE did not work well, especially due to the "0:00" after each date, presumably a timestamp. As mentioned in section two, we split this variable to create new variables for each part of the date. Doing so resulted in new significant variables that improved our model.
+
+In the future we would potentially include geographic data. The original dataset included longitude and latitude data, which was excluded from the dataset. In retrospect, not being able to identify neighborhoods where homes are could be a limitation and including that data could make the model more accurate and useful.
+
+One assumption that we make with this dataset, and thus our model, is the "Condition" variable. Knowing what party determined the condition of each home along with when and by what criteria the evaluation occured would be of interest to determine its veracity as a variable. Is there an industry standard for such an assessment? This seems like something that could be subjective. Also we notice that there is no "poor" condition - the lowest level is "Fair", which could perpetuate subjectivity.
+
+
+
