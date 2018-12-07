@@ -267,11 +267,11 @@ fit <- lm(data = houses, PRICE ~ BATHRM + HF_BATHRM  + ROOMS + BEDRM + AYB + YR_
 summary(fit)
 
 ```
-Initially, we were surprised with an R<sup>2</sup> value of .6982 by using all variables with no transformations. We regarded this value as significant and established .6982 as our baseline for improvement.
+Initially, we were surprised with an R<sup>2</sup> value of 0.6982 by using all variables with no transformations. We regarded this value as significant and established 0.6982 as our baseline for improvement.
 
 Judging by the p-values, ROOMS, AYB, YR_RMDL, STORIES, and SALEMONTH appeared to be potentially insignificant. The estmiated model coefficients also had two negative values, BEDRM and YR_RMDL. Intuitively, the more bedrooms a house has and the more recent remodelling was conducted, the higher the price should be. This means these two varaibles would have positive correlation with the target variable price. BEDRM however, did still have a significant p-value. 
 
-To continue analysis of our base model, we also conducted an ANOVA test:
+To continue analysis of our base model, we also conducted an Analysis of Variance (ANOVA) test:
 ```{r 5.2, echo=FALSE}
 
 # Review ANOVA and compare F statistic
@@ -280,8 +280,9 @@ anova(fit)
 
 ```
 
+In analyzing regression models, an ANOVA test is used to analyze the amount of variation the model explains versus the amount of variation the model does not explain. This can be evaluated through the F-statistic and the resulting p-value. Looking at the output of the ANOVA table, we saw that AYB and SALEMONTH both had relatively low F-statistics and high p-values. This revealed to us that these variablesare were not beneficial in calculating PRICE and account for very little target variance.
 
-Next, we decidied to check the second assumption of ANOVA: that all errors must be normally distributed. We plotted the residuals and annotated their distribution:
+The ANOVA test also has three assumptions: All observations are independent of one another, the errors are normally distributed, and the variances of each group are equal. For the first assumption, we could resonably conclude that our observations were sampled independetly. Next, we decidied to check the second assumption of ANOVA: that all errors must be normally distributed. We plotted the residuals and annotated their distribution:
 
 ```{r 5.3, echo=FALSE}
 
@@ -295,7 +296,7 @@ ggplot(fit.df, aes(x = .fitted, y = .resid))+
 
 ```
 
-The plot above clearly shows that our model did not have normally distributed errors. To confirm this formally, we conducted a Shapiro-Wilk test:
+The plot above clearly shows that our model did not have normally distributed errors. To confirm this formally, we conducted a Shapiro-Wilk test which checks for the normality of residuals:
 
 ```{r 5.4, echo=FALSE}
 # Shapiro-Wilk test for normality
@@ -303,18 +304,18 @@ The plot above clearly shows that our model did not have normally distributed er
 shapiro.test(fit$residuals)
 
 ```
-Since the p-value for the Shapiro-Wilk test was essentially 0, this indicated our model did not have normal residuals, which confirms the information from the residual plot.
+Since the p-value for the Shapiro-Wilk test was essentially zero, this indicated our model did not have normal residuals, which confirms the information from the residual plot.
 
-Before we began model improvement, we checked for the third assumption of ANOVA, that the variances of each group were equal:
+Before we began model improvement, we checked for the third assumption of ANOVA, that the variances of each group were equal. We conducted a Non-Constant Variance test:
 ```{r 5.5, echo=FALSE}
 # ncvTest for constant variance
 
 ncvTest(fit)
 
 ```
-The practically 0 p-value indicated that we could not assume equal variances with our model.
+The practically zero p-value indicated that we could not assume equal variances with our model.
 
-These tests and exploratory analysis of our inital linear regression model revealed to us we could not validate ANOVA assumption number 2 or 3. This led us to the conclusion that we needed to conduct a Box-Cox test and appropriately transform our target variable to account for these issues.
+These tests and exploratory analysis of our inital linear regression model revealed to us we could not validate ANOVA assumption number two or three. This led us to the conclusion that we needed to conduct a Box-Cox test and appropriately transform our target variable to account for these issues.
 
 The last model analysis we performed was reviewing the Variance Inflation Factors for evidence of multicollinearity.
 ```{r 5.6, echo=FALSE}
@@ -333,7 +334,7 @@ Once we analyzed our inital model and established areas of improvement, we began
 
 As mentioned previously, variables with negative coefficients were considered. YR_RMDL was already tested because of it's high p-value but we tested dropping BEDRM as well. This resulted in a lower R<sup>2</sup>, so the variable was kept for the model. It could be the case that within the district where this data set was created, having more bedrooms is undesirable past a certain point. This may be the case in a highly-populated metropolitan area with a concentrated younger demographic.
 
-Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For the data, we anticipated some correllation between variables. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have a few large rooms yet still have a high level of square footage. This could also be said for rooms and bedrooms. We postulate that multicolliearity may be present in similar data sets, but was not found - or significant in our data of 2000 houses.
+Since multicollinearity was not present in the VIF test, we did not have any correlated variables to drop. For the data, we anticipated some correllation between variables and noticed small correlations during our analysis of our correlation plot. For example, as the number of rooms increases, it would be expected that the gross living square footage would also increase. We determined that these two are not necessarily collinear, as proved in the VIF test. A house may have several small rooms and little square footage while a large house may have a few large rooms yet still have a high level of square footage. This could also be said for rooms and bedrooms. We postulate that multicolliearity may be present in similar data sets, but was not found - or significant in our data of 2000 houses.
 
 Progressing onto transforming the remaining variables, we conducted a Box-Cox test on each predicitor variable to understand if there were transformations that would somewhat normalize them. For some variables, we had to slightly manipulate them so they could processed (ex. added "1", Box-Cox cannot process variables with "0"). After analying the Box-Cox lambda values and applying the appropriate transformations, we added and removed those transformations until we recieved the highest R<sup>2</sup>. Adding log(BEDRM + 1) and the log(GBA) brought our R<sup>2</sup> to .7269, which was a marked improvement.
 
@@ -376,7 +377,7 @@ fit3 <- lm(data = houses, I(1/PRICE) ~ BATHRM  + HF_BATHRM  + BEDRM + log(BEDRM+
 #summary(fit3)
 
 ```
-A lambda value of 0.33 is roughly half way in between the $log$ and $sqrt$ transformation values. We tested both transformations and considered the residual plot for each transformation. $Log$ actually lowered the R<sup>2</sup> to .6589 while $sqrt$ increased the R<sup>2</sup> to .7481 Both residual plots greatly improved the residual distribution. We decided on the $sqrt$ transformation because of the increase in R<sup>2</sup> accuracy:
+A lambda value of 0.33 is roughly half way in between the $log$ and $sqrt$ transformation values. We tested both transformations and considered the residual plot for each transformation. $Log$ actually lowered the R<sup>2</sup> to 0.6589 while $sqrt$ increased the R<sup>2</sup> to 0.7481 Both residual plots greatly improved the residual distribution. We decided on the $sqrt$ transformation because of the increase in R<sup>2</sup> accuracy:
 ```{r 5.8, echo=FALSE}
 
 fit_final <- lm(data = houses, sqrt(PRICE) ~  BATHRM  + HF_BATHRM  + BEDRM  + log(BEDRM+1) + STORIES  + SALEMONTH + SALEDAY + SALEYEAR  + GBA + log(GBA) + CNDTN + LANDAREA )
@@ -390,11 +391,11 @@ ggplot(fit_final.df, aes(x = .fitted, y = .resid))+
 
 ```
 
-With an R<sup>2</sup> value of .7481, our model accounts for roughly 75% of variation in price from the predicting variables. This is the highest we were able to get the R<sup>2</sup> value following the process outlined above.
+With an R<sup>2</sup> value of 0.7481, our model accounts for roughly 75% of variation in price from the predicting variables. This is the highest we were able to get the R<sup>2</sup> value following the process outlined above.
 
 Also, as you can see, the plot of residuals looks much better and confirms the sqrt transformation aided our model.
 
-To confirm that dropping variables and transforming them improved our accuracy, we implemented AIC and BIC for our original model and our final model:
+To confirm that dropping variables and transforming them improved our accuracy, we implemented AIC and BIC for our original model and our final model. AIC is used to try to select the model which most adequately assesses the unkown, while BIC is used to find the model which assesses the true value :
 ```{r 5.9, echo=FALSE}
 
 #using AIC & BIC for model comparison
